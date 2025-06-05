@@ -44,12 +44,6 @@
 		position = [x, y];
 	});
 
-	$effect(() => {
-		console.log("position", $inspect(position), "percentScrolledValues", $inspect(percentScrolledValues));
-		// console.log('Current value:', value);
-		// console.log('Current percentScrolledValues:', percentScrolledValues);
-	});
-
 	function constrain(n, low, high) {
 		return Math.max(Math.min(n, high), low);
 	}
@@ -87,7 +81,7 @@
 	
 	<div class="wrapper">
 		<div class="container">
-			<p class="moving" style="left:{position}%; background:black;color:white; font-family: monospace;">
+			<p class="moving" style="left: {position[0]}%; background:black;color:white; font-family: monospace;">
 				Value: {value}, Progress: {percentScrolledValues[value] ? percentScrolledValues[value].toFixed(2) : '0.00'}, Position: {position.map(x => x.toFixed(2)).join(', ')}
 			</p>
 			<StreetView 

@@ -8,6 +8,11 @@
     let opacity = $state(0);
     let isViewerReady = $state(false);
 
+    // Function to generate marker HTML
+    function getMarkerHtml() {
+        return `HTML <b>marker</b> &hearts; ${coords[0].toFixed(2)}, ${coords[1].toFixed(2)}`;
+    }
+
     $effect.root(() => {
         $effect(() => {
             // Explicitly track coords as a dependency
@@ -42,15 +47,13 @@
                     loading_img: null,
                     defaultPitch: 6.18,
                     defaultYaw: -.002,
-                    // defaultZoomLvl: animatedValues.zoom.start,
-
                     plugins: [
                         [MarkersPlugin, {
                             markers: [
                                 {
                                     id: 'text',
                                     position: { yaw: 0, pitch: 0 },
-                                    html: 'HTML <b>marker</b> &hearts; {coords}',
+                                    html: getMarkerHtml(),
                                     anchor: 'bottom right',
                                     scale: [0.5, 1.5],
                                     style: {
