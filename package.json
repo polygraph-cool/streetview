@@ -38,5 +38,13 @@
 	"engines": {
 		"node": ">= 18.20.4"
 	},
-	"browserslist": "> 0.5%, last 4 versions, not ie <= 11, not ie_mob <= 11"
+	"browserslist": "> 0.5%, last 4 versions, not ie <= 11, not ie_mob <= 11",
+	"dependencies": {
+		"@photo-sphere-viewer/core": "^5.13.2",
+		"@photo-sphere-viewer/markers-plugin": "^5.13.2",
+		"@types/three": "^0.176.0",
+		"d3-ease": "^3.0.1",
+		"svelte-scroll-tracker": "^1.0.7",
+		"three": "^0.176.0"
+	}
 }
