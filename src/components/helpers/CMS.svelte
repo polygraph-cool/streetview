@@ -4,29 +4,43 @@
 	let { components = {}, body = [] } = $props();
 </script>
 
-{#each body as { section, content }}
-	<!-- replace all non alpha numeric characters with "" -->
-	{@const id = section.toLowerCase().replace(/[^a-z0-9]/g, "")}
-	{@const C = components[section]}
-	<section {id}>
+{#each body as item}
+	{#if 'section' in item}
+		{@const id = item.section.toLowerCase().replace(/[^a-z0-9]/g, "")}
+		{@const C = components[item.section]}
+		<section {id}>
+			{#if C}
+				<C {...item.content} />
+			{:else}
+				{#each item.content as { type, value }}
+					{@const C = components[type]}
+					{@const isString = typeof value === "string"}
+					{#if C}
+						<C {...value} />
+					{:else if type === "text"}
+						<p>{@html value}</p>
+					{:else if isString}
+						<svelte:element this={type}>
+							{@html value}
+						</svelte:element>
+					{:else}
+						<svelte:element this={type} {...value}></svelte:element>
+					{/if}
+				{/each}
+			{/if}
+		</section>
+	{:else if 'type' in item}
+		{@const C = components[item.type]}
 		{#if C}
-			<C {...content} />
+			<C {...item.value} />
+		{:else if item.type === "text"}
+			<p>{@html item.value}</p>
+		{:else if typeof item.value === "string"}
+			<svelte:element this={item.type}>
+				{@html item.value}
+			</svelte:element>
 		{:else}
-			{#each content as { type, value }}
-				{@const C = components[type]}
-				{@const isString = typeof value === "string"}
-				{#if C}
-					<C {...value} />
-				{:else if type === "text"}
-					<p>{@html value}</p>
-				{:else if isString}
-					<svelte:element this={type}>
-						{@html value}
-					</svelte:element>
-				{:else}
-					<svelte:element this={type} {...value}></svelte:element>
-				{/if}
-			{/each}
+			<svelte:element this={item.type} {...item.value}></svelte:element>
 		{/if}
-	</section>
+	{/if}
 {/each}
