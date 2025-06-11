@@ -2,16 +2,26 @@
 	import StreetView from "./StreetView.svelte";
 	import useWindowDimensions from "$runes/useWindowDimensions.svelte.js";
 	import { easeCubicInOut } from 'd3-ease';
+    import { onMount } from "svelte";
 	import Scrolly from "$components/helpers/Scrolly.svelte";
 
 	let { props } = $props();
 
-	let waypoints = {
-		0: [6.18, -.002],
-		1: [5.475862056987275,-0.015414696963291428],
-		2: [3.961244051213098,-0.04427003953391351],
-		3: [3.961244051213098,-0.04427003953391351],
-	}
+    let waypoints = {};
+    let waysSet = $state(false);
+    let zoom = $state(50);
+    let zoomLevels = {};
+
+    onMount(() => {
+        console.log(props.slides);
+
+        props.slides.forEach((slide, i) => {
+            waypoints[i] = slide.coords.split(",").map(d => +d);
+            zoomLevels[i] = +slide.zoom;
+        });
+        waysSet = true;
+    });
+    
 
 	
 	let _triggerArt = $state([]);
@@ -21,27 +31,32 @@
 	let percentScrolledValues = $state([]);
 
 	let dimensions = new useWindowDimensions();
-
 	let position = $state([0, 0]);
 
 	$effect(() => {
-		if (value === undefined || value === null) {
-			position = waypoints[0];
-			return;
-		}
-		
-		const currentWaypoint = waypoints[value] ?? waypoints[0];
-		const prevWaypoint = waypoints[value - 1] ?? currentWaypoint;
-		const rawProgress = percentScrolledValues[value] ?? 0;
-		
-		// Apply easing to the progress
-		const easedProgress = easeCubicInOut(rawProgress);
-		
-		// Interpolate both coordinates using eased progress
-		const x = prevWaypoint[0] + (currentWaypoint[0] - prevWaypoint[0]) * easedProgress;
-		const y = prevWaypoint[1] + (currentWaypoint[1] - prevWaypoint[1]) * easedProgress;
-		
-		position = [x, y];
+        if(waysSet) {
+            if (value === undefined || value === null) {
+                position = waypoints[0];
+                zoom = 50;
+                return;
+            }
+            
+            const currentZoom = zoomLevels[value] ? zoomLevels[value] : 50;
+            const prevZoom = zoomLevels[value - 1] ?? currentZoom;
+
+            const currentWaypoint = waypoints[value] ?? waypoints[0];
+            const prevWaypoint = waypoints[value - 1] ?? currentWaypoint;
+            const rawProgress = percentScrolledValues[value] ?? 0;
+            
+            // Apply easing to the progress
+            const easedProgress = easeCubicInOut(rawProgress);
+            
+            // Interpolate both coordinates using eased progress
+            const x = prevWaypoint[0] + (currentWaypoint[0] - prevWaypoint[0]) * easedProgress;
+            const y = prevWaypoint[1] + (currentWaypoint[1] - prevWaypoint[1]) * easedProgress;
+            zoom = prevZoom + (currentZoom - prevZoom) * easedProgress;
+            position = [x, y];
+        }
 	});
 
 	function constrain(n, low, high) {
@@ -69,54 +84,66 @@
 	});
 
 	// Example panorama URL - you should replace this with your actual Google Street View panorama URL
-	const panoramaUrl = "assets/images/full.png";
+	const panoramaUrl = `assets/images/${props.panorama_id}.jpg`;
 
 </script>
 
 <svelte:window bind:scrollY />
 
 <svelte:boundary onerror={(e) => console.error(e)}>
-	
-	<div class="wrapper">
-		<div class="container value-{value}">
-			<p class="moving" style="left: {position[0]}%; background:black;color:white; font-family: monospace;">
-				Value: {value}, Progress: {percentScrolledValues[value] ? percentScrolledValues[value].toFixed(6) : '0.00'}, Position: {position.map(x => x.toFixed(6)).join(', ')}
-			</p>
-			{#if position}
-				<StreetView 
-					panoramaUrl={panoramaUrl}
-					coords={position}
-				/>
-			{/if}
-		</div>
-		<div class="text">
-			<Scrolly 
-				bind:value 
-				top={-100} 
-				bottom={-100} 
-				increments={10}
-			>
-				{#each props.slides as step, i}
-					{@const active = value === i}
-					<div class:active class="step scrolly-block" bind:this={_triggerArt[i]}>
-						<div class="text-wrapper">
-							<p class="text-fg" style="opacity: 1">
-								<span class="text-inner">{step.text}</span>
-							</p>
-							<p aria-hidden="true" class="text-bg" style="opacity: 1">
-								<span class="text-inner">{step.text}</span>
-							</p>
-						</div>
-						
-					</div>
-				{/each}
-			</Scrolly>
-		</div>
-	</div>
+	{#if waysSet}
+        <div class="wrapper">
+            <div class="container value-{value}">
+                <p class="moving" style="left: {position[0]}%; background:black;color:white; font-family: monospace;">
+                    Value: {value}, Progress: {percentScrolledValues[value] ? percentScrolledValues[value].toFixed(6) : '0.00'}, Position: {position.map(x => x.toFixed(6)).join(', ')}
+                </p>
+                {#if position}
+                    <StreetView 
+                        panoramaUrl={panoramaUrl}
+                        coords={position}
+                        zoom={zoom ? zoom : 50}
+                    />
+                {/if}
+            </div>
+            <div class="text">
+                <Scrolly 
+                    bind:value 
+                    top={-100} 
+                    bottom={-100} 
+                    increments={10}
+                >
+                    {#each props.slides as step, i}
+                        {@const active = value === i}
+                        <div class:active class="step scrolly-block" bind:this={_triggerArt[i]}>
+                            <div class="text-wrapper">
+                                <p class="text-fg" style="opacity: 1">
+                                    <span class="text-inner">{step.text}</span>
+                                </p>
+                                <p aria-hidden="true" class="text-bg" style="opacity: 1">
+                                    <span class="text-inner">{step.text}</span>
+                                </p>
+                            </div>
+                            
+                        </div>
+                    {/each}
+                </Scrolly>
+            </div>
+        </div>
+    {/if}
 
 </svelte:boundary>
 
 <style>
+    .container {
+		position: sticky;
+		top: 0;
+		height: 100%;
+		width: 100%;
+		pointer-events: none;
+	}
+    .text {
+        /* display: none; */
+    }
 	.text-wrapper {
 		position: relative;
 		margin-left: 100px;
@@ -194,13 +221,7 @@
 		/* height: 300vh; */
 	}
 
-	.container {
-		position: sticky;
-		top: 0;
-		height: 100%;
-		width: 100%;
-		pointer-events: none;
-	}
+	
 
 	.container p {
 		position: absolute;

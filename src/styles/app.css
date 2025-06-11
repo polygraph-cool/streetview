@@ -93,6 +93,8 @@ svg {
 	transition: opacity 0.5s ease-in-out, stroke-opacity 0.5s ease-in-out;
 	backdrop-filter: blur(2rem);
 }
+/* Apply fade styles for values 3-10 */
+
 
 .value-1 .fade {
 	opacity: 1;
@@ -100,6 +102,12 @@ svg {
 }
 
 .value-2 .fade {
+	opacity: 1;
+	stroke-opacity: 1;
+}
+
+[class^="value-"]:nth-child(n+1) .fade,
+[class*=" value-"]:nth-child(n+1) .fade {
 	opacity: 1;
 	stroke-opacity: 1;
 }

@@ -1,19 +1,105 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, getContext } from 'svelte';
     import { browser } from '$app/environment';
+    import data from "$data/annotations.csv";
+    import { scaleLinear } from "d3-scale";
 
-    let { panoramaUrl, coords } = $props();
+    let { panoramaUrl, coords, zoom } = $props();
     let viewerContainer;
     let viewer;
     let opacity = $state(0);
     let isViewerReady = $state(false);
 
-    // Function to generate marker HTML
-    function getMarkerHtml() {
-        return `<div>Matt</div>`;
-    }
+    let scaleYaw = scaleLinear().domain([0, 1]).range([0,Math.PI * 2]);
+    let scalePitch = scaleLinear().domain([0, 1]).range([Math.PI / 2, -Math.PI / 2]);
 
     let markers = [];
+
+    function parseMarkers() {
+        let markersParsed = [];
+        
+        // Group data by id
+        let groupedData = data.reduce((acc, row) => {
+            if (!acc[row.id]) {
+                acc[row.id] = {
+                    id: row.id,
+                    polygon: [],
+                    text: null
+                };
+            }
+            
+            // If it's a polygon point, add to polygon array
+            if (row.form === 'poly') {
+                acc[row.id].polygon.push({
+                    yaw: scaleYaw(row.x) + Math.PI,
+                    pitch: scalePitch(row.y)
+                });
+            }
+            // If it's a text marker, store the text
+            else if (row.form === 'text') {
+                acc[row.id].text = row.text;
+            }
+            
+            return acc;
+        }, {});
+
+        // Convert grouped data to marker format
+        markers = Object.values(groupedData).map(group => {
+            let markerSet = [];
+            
+            // Add polygon marker if we have polygon points
+            if (group.polygon.length > 0) {
+                markerSet.push({
+                    id: `${group.id}-polygon`,
+                    className: 'fade',
+                    polygon: group.polygon.map(point => [point.yaw, point.pitch]),
+                    svgStyle: {
+                        stroke: 'rgba(255, 0, 50, 0.8)',
+                        strokeWidth: '2px',
+                        marginLeft: '-1px',
+                        opacity: null,
+                        strokeOpacity: 'none',
+                        fill: 'none',
+                    }
+                });
+            }
+            
+            // Add text marker if we have text
+            if (group.text) {
+                // Use the first polygon point as the text position
+                const position = group.polygon[0] || { yaw: 0, pitch: 0 };
+                markerSet.push({
+                    id: `${group.id}-text`,
+                    className: 'fade',
+                    position: position,
+                    html: `<div>${group.text}</div>`,
+                    anchor: 'bottom left',
+                    //rotation: { yaw: '10deg', pitch: '10deg', roll: 'deg' },
+                    scale: {
+                        zoom: [1, 1],
+                        yaw: [1, 1.5],
+                        pitch: [1, 1.5]
+                    },
+                    style: {
+                        maxWidth: '100px',
+                        color: 'white',
+                        opacity: null,
+                        marginLeft: '-1px',
+                        paddingLeft: '5px',
+                        paddingRight: '5px',
+                        backgroundColor: 'red',
+                        fontSize: '10px',
+                        fontFamily: 'Helvetica, sans-serif',
+                        textAlign: 'center',
+                    }
+                });
+            }
+            
+            return markerSet;
+        }).flat();
+
+        console.log('Parsed markers:', markers);
+    }
 
     function makeRandomMarker() {
         // Clear existing markers
@@ -21,11 +107,6 @@
         
         // Generate 5 random marker sets
         for (let i = 0; i < 10; i++) {
-            // Generate random position between -π and π for yaw, and -π/2 to π/2 for pitch
-            // let randomPos = { 
-            //     yaw: (Math.random() * 2 * Math.PI) - Math.PI,
-            //     pitch: (Math.random() * Math.PI) - (Math.PI / 2)
-            // };
 
             let randomPos = { 
                 yaw: Math.random() * 6,
@@ -97,14 +178,13 @@
                     yaw: currentCoords[0],
                     pitch: currentCoords[1],
                 });
-
-                // viewer.zoom(100);
+                viewer.zoom(zoom);
             }
         });
     });
 
     onMount(async () => {
-        makeRandomMarker();
+        parseMarkers();
         console.log(markers);
         if (browser) {
             try {
@@ -128,8 +208,6 @@
                             markers: markers,
                         }],
                     ],
-
-
                 });
 
                 viewer.addEventListener('panorama-loaded', (event) => {
@@ -145,8 +223,10 @@
                         yaw: coords[0],
                         pitch: coords[1],
                     });
-                    // console.log('Viewer "ready" event fired. Current position:', viewer.getPosition());
-                    // 'panorama-loaded' is generally better for ensuring position is stable.
+
+                    // viewer.addEventListener('position-updated', ({ position }) => {
+                    //     console.log(`new position is yaw: ${position.yaw} pitch: ${position.pitch}`);
+                    // });
                 });
 
             } catch (error) {
