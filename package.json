@@ -42,6 +42,8 @@
 	"dependencies": {
 		"@photo-sphere-viewer/core": "^5.13.2",
 		"@photo-sphere-viewer/markers-plugin": "^5.13.2",
+		"@photo-sphere-viewer/resolution-plugin": "^5.13.2",
+		"@photo-sphere-viewer/settings-plugin": "^5.13.2",
 		"@types/three": "^0.176.0",
 		"d3-ease": "^3.0.1",
 		"d3-scale": "^4.0.2",

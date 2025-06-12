@@ -5,15 +5,39 @@
     import { onMount } from "svelte";
 	import Scrolly from "$components/helpers/Scrolly.svelte";
 
-	let { props } = $props();
+	let { props, markers } = $props();
 
     let waypoints = {};
     let waysSet = $state(false);
     let zoom = $state(50);
     let zoomLevels = {};
 
+    function getProgressStep(progress, length) {
+        if (length === 0) return 0;
+        const threshold = 1 / (length + 1);
+        for (let i = 1; i <= length; i++) {
+            if (progress > threshold * i) {
+                continue;
+            }
+            return i;
+        }
+        return length;
+    }
+    let markersByVal = markers.reduce((acc, marker) => {
+        const val = marker.val;
+        const id = marker.id;
+        const key = `${val}-${id}`;
+        if (!acc[key]) {
+            acc[key] = [];
+        }
+        acc[key].push(marker);
+        return acc;
+    }, {});
+    console.log(markersByVal);
+    let uniqueIds = [...new Set(markers.map(m => m.id))];
+
     onMount(() => {
-        console.log(props.slides);
+
 
         props.slides.forEach((slide, i) => {
             waypoints[i] = slide.coords.split(",").map(d => +d);
@@ -36,16 +60,16 @@
 	$effect(() => {
         if(waysSet) {
             if (value === undefined || value === null) {
-                position = waypoints[0];
+                position = props.default_coords.split(",").map(d => +d);
                 zoom = 50;
                 return;
             }
             
             const currentZoom = zoomLevels[value] ? zoomLevels[value] : 50;
-            const prevZoom = zoomLevels[value - 1] ?? currentZoom;
+            const prevZoom = zoomLevels[value - 1] ?? 50;
 
             const currentWaypoint = waypoints[value] ?? waypoints[0];
-            const prevWaypoint = waypoints[value - 1] ?? currentWaypoint;
+            const prevWaypoint = waypoints[value - 1] ?? props.default_coords.split(",").map(d => +d);
             const rawProgress = percentScrolledValues[value] ?? 0;
             
             // Apply easing to the progress
@@ -92,8 +116,9 @@
 
 <svelte:boundary onerror={(e) => console.error(e)}>
 	{#if waysSet}
+        {@const thing = getProgressStep(percentScrolledValues[value], uniqueIds.length)}
         <div class="wrapper">
-            <div class="container value-{value}">
+            <div class="container value-{value} percent-{thing}">
                 <p class="moving" style="left: {position[0]}%; background:black;color:white; font-family: monospace;">
                     Value: {value}, Progress: {percentScrolledValues[value] ? percentScrolledValues[value].toFixed(6) : '0.00'}, Position: {position.map(x => x.toFixed(6)).join(', ')}
                 </p>
@@ -102,6 +127,8 @@
                         panoramaUrl={panoramaUrl}
                         coords={position}
                         zoom={zoom ? zoom : 50}
+                        value={value}
+                        markersRaw={markers}
                     />
                 {/if}
             </div>
@@ -114,7 +141,8 @@
                 >
                     {#each props.slides as step, i}
                         {@const active = value === i}
-                        <div class:active class="step scrolly-block" bind:this={_triggerArt[i]}>
+                        {@const isLast = i === props.slides.length - 1}
+                        <div class:active class:isLast class="step-{i} scrolly-block" bind:this={_triggerArt[i]}>
                             <div class="text-wrapper">
                                 <p class="text-fg" style="opacity: 1">
                                     <span class="text-inner">{step.text}</span>
@@ -221,8 +249,6 @@
 		/* height: 300vh; */
 	}
 
-	
-
 	.container p {
 		position: absolute;
 		top: 50%;
@@ -240,6 +266,12 @@
 		background-color: rgba(255,255,0,0.5);
 		margin-bottom: 100vh;
 	}
+
+    .isLast {
+        margin-bottom: 0;
+        /* padding-bottom: 100vh; */
+    }
+    
 
 	p {
 		margin: 0;
