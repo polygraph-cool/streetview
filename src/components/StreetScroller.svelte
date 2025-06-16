@@ -5,12 +5,14 @@
     import { onMount } from "svelte";
 	import Scrolly from "$components/helpers/Scrolly.svelte";
 
-	let { props, markers } = $props();
+	let { props, markers, count, height, type } = $props();
+	let dimensions = new useWindowDimensions();
 
     let waypoints = {};
     let waysSet = $state(false);
     let zoom = $state(50);
     let zoomLevels = {};
+
 
     function getProgressStep(progress, length) {
         if (length === 0) return 0;
@@ -23,29 +25,18 @@
         }
         return length;
     }
-    let markersByVal = markers.reduce((acc, marker) => {
-        const val = marker.val;
-        const id = marker.id;
-        const key = `${val}-${id}`;
-        if (!acc[key]) {
-            acc[key] = [];
-        }
-        acc[key].push(marker);
-        return acc;
-    }, {});
-    console.log(markersByVal);
+
     let uniqueIds = [...new Set(markers.map(m => m.id))];
 
+
+
     onMount(() => {
-
-
         props.slides.forEach((slide, i) => {
             waypoints[i] = slide.coords.split(",").map(d => +d);
             zoomLevels[i] = +slide.zoom;
         });
         waysSet = true;
     });
-    
 
 	
 	let _triggerArt = $state([]);
@@ -54,7 +45,6 @@
 	let value = $state();
 	let percentScrolledValues = $state([]);
 
-	let dimensions = new useWindowDimensions();
 	let position = $state([0, 0]);
 
 	$effect(() => {
@@ -88,14 +78,31 @@
 	}
 
 	$effect(() => {
+
+        // console.log(dimensions,dimensions.height);
+
+        // let dim = new useWindowDimensions();
+		// console.log(dim,dim.height,dimensions.height);
+
+
 		percentScrolledValues = _triggerArt.map((el, i) => {
 			// Get the element's position relative to the top of the page
 			const elementTop = el.getBoundingClientRect().top + window.scrollY;
 			const elementHeight = el.getBoundingClientRect().height;
-			
+
+            
 			// Calculate the start and end points for the scroll animation
-			const sectionStart = elementTop - dimensions.height;
-			const sectionEnd = elementTop;
+
+            // console.log(el,i)
+			// Check if element has isLast class
+			const isLast = el.classList.contains('isLast');
+            let sectionStart = elementTop - (elementHeight*1.5);//dimensions.height;
+            if(isLast){
+                sectionStart = elementTop - (elementHeight);//dimensions.height;
+
+            }
+			// const sectionStart = elementTop - (elementHeight*1.5);//dimensions.height;
+			const sectionEnd = elementTop - 200;
 			
 			// Calculate how far we've scrolled through this section
 			let offset = scrollY - sectionStart;
@@ -117,11 +124,11 @@
 <svelte:boundary onerror={(e) => console.error(e)}>
 	{#if waysSet}
         {@const thing = getProgressStep(percentScrolledValues[value], uniqueIds.length)}
-        <div class="wrapper">
-            <div class="container value-{value} percent-{thing}">
-                <p class="moving" style="left: {position[0]}%; background:black;color:white; font-family: monospace;">
+        <div class="wrapper" id={type}>
+            <div class="container value-{value} percent-{thing} {value || value === 0 ? 'container-visible' : ''}" style="height: {height}px;">
+                <!-- <p class="moving" style="left: {position[0]}%; background:black;color:white; font-family: monospace;">
                     Value: {value}, Progress: {percentScrolledValues[value] ? percentScrolledValues[value].toFixed(6) : '0.00'}, Position: {position.map(x => x.toFixed(6)).join(', ')}
-                </p>
+                </p> -->
                 {#if position}
                     <StreetView 
                         panoramaUrl={panoramaUrl}
@@ -135,14 +142,16 @@
             <div class="text">
                 <Scrolly 
                     bind:value 
-                    top={-100} 
-                    bottom={-100} 
+                    top={height/2} 
+                    bottom={-100}
                     increments={10}
                 >
                     {#each props.slides as step, i}
                         {@const active = value === i}
+                        {@const isFirst = i === 0}
+                        {@const isFirstIntro = i === 0 && count === "first"}
                         {@const isLast = i === props.slides.length - 1}
-                        <div class:active class:isLast class="step-{i} scrolly-block" bind:this={_triggerArt[i]}>
+                        <div style="--height: {height}px;" class:active class:isLast class:isFirstIntro class:isFirst class="step-{i} scrolly-block" bind:this={_triggerArt[i]}>
                             <div class="text-wrapper">
                                 <p class="text-fg" style="opacity: 1">
                                     <span class="text-inner">{step.text}</span>
@@ -162,13 +171,24 @@
 </svelte:boundary>
 
 <style>
+
+    .isFirstIntro {
+        /* height: var(--height); */
+    }
     .container {
 		position: sticky;
 		top: 0;
 		height: 100%;
 		width: 100%;
 		pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
 	}
+
+    .container-visible {
+        opacity: 1;
+    }
+
     .text {
         /* display: none; */
     }
@@ -180,8 +200,8 @@
 
 	.text-wrapper .text-inner {
 		font: inherit;
-		font-family: monospace;
-		font-weight: 600;
+		font-family: 'Atlas Grotesk';
+		/* font-weight: 600; */
 	}
 
 	p.text-bg, p.text-fg {
@@ -191,6 +211,8 @@
 		-moz-text-size-adjust: 100%;
 		-webkit-text-size-adjust: 100%;
 		text-size-adjust: 100%;
+        font-size: 20px;
+        color: var(--color-bg);
 	}
 
 	.text-fg {
@@ -235,9 +257,9 @@
 	}
 
 	.text-bg .text-inner {
-		color: var(--color-bg);
-		background-color: var(--color-bg);
-		box-shadow: 15px 0 var(--color-bg), -15px 0 var(--color-bg);
+		color: rgba(0,0,0,0);
+		background-color: var(--color-fg);
+		box-shadow: 15px 0 var(--color-fg), -15px 0 var(--color-fg);
 	}
 
 	.intro {
@@ -257,21 +279,7 @@
 
 	.moving {
 		transition: left 0.1s linear;
-	}
-
-	.scrolly-block {
-		position: relative;
-		z-index: 1;
-		height: 500px;
-		background-color: rgba(255,255,0,0.5);
-		margin-bottom: 100vh;
-	}
-
-    .isLast {
-        margin-bottom: 0;
-        /* padding-bottom: 100vh; */
-    }
-    
+	}    
 
 	p {
 		margin: 0;

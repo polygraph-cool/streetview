@@ -9,6 +9,43 @@
     let viewer;
     let opacity = $state(0);
     let isViewerReady = $state(false);
+
+
+    let colors = [
+        {
+            "name":"teal",
+            "color":"#74FCD0",
+            "text":"#000"
+        },
+        {
+            "name":"yellow",
+            "color":"#DEFE05",
+            "text":"#000"
+        },
+        {
+            "name":"red",
+            "color":"#FF0F00",
+            "text":"#fff"
+        },
+        {
+            "name":"green",
+            "color":"#63FF02",
+            "text":"#000"
+        },
+        {
+            "name":"orange",
+            "color":"#FFC300",
+            "text":"#000"
+        },
+        {
+            "name":"blue",
+            "color":"#01B4FD",
+            "text":"#000"
+        },
+        
+    ];
+
+
     // let resolutionPlugin;
     let scaleYaw = scaleLinear().domain([0, 1]).range([0,Math.PI * 2]);
     let scalePitch = scaleLinear().domain([0, 1]).range([Math.PI / 2, -Math.PI / 2]);
@@ -17,14 +54,15 @@
 
     function parseMarkers() {
         let markersParsed = [];
-        
         // Group data by id
         let groupedData = markersRaw.reduce((acc, row) => {
             if (!acc[row.id]) {
                 acc[row.id] = {
                     id: row.id,
                     polygon: [],
-                    text: null
+                    text: null,
+                    step: row.val,
+                    delay: row.count
                 };
             }
             
@@ -38,26 +76,33 @@
             // If it's a text marker, store the text
             else if (row.form === 'text') {
                 acc[row.id].text = row.text;
+                acc[row.id].textPos = {
+                    yaw: scaleYaw(row.x) + Math.PI,
+                    pitch: scalePitch(row.y)                    
+                };
             }
             
             return acc;
         }, {});
-
         // Convert grouped data to marker format
-        markers = Object.values(groupedData).map(group => {
+        markers = Object.values(groupedData).map((group, i) => {
             let markerSet = [];
-            
+
+            const colorsShuffle = colors.sort(() => Math.random() - 0.5);
+
+            const colorIndex = i % colorsShuffle.length;  // This will cycle through colors array
+
             // Add polygon marker if we have polygon points
             if (group.polygon.length > 0) {
                 markerSet.push({
                     id: `${group.id}-polygon`,
-                    className: 'fade',
+                    className: `fade annotation-value-${group.step} delay-${group.delay}`,
                     polygon: group.polygon.map(point => [point.yaw, point.pitch]),
                     svgStyle: {
-                        stroke: 'rgba(255, 0, 50, 0.8)',
                         strokeWidth: '2px',
                         marginLeft: '-1px',
                         opacity: null,
+                        stroke: colorsShuffle[colorIndex].color,
                         strokeOpacity: 'none',
                         fill: 'none',
                     }
@@ -67,30 +112,29 @@
             // Add text marker if we have text
             if (group.text) {
                 // Use the first polygon point as the text position
-                const position = group.polygon[0] || { yaw: 0, pitch: 0 };
+                const position = group.textPos || { yaw: 0, pitch: 0 };
                 markerSet.push({
                     id: `${group.id}-text`,
-                    className: 'fade',
+                    className: `fade annotation-value-${group.step} delay-${group.delay}`,
                     position: position,
                     html: `<div>${group.text}</div>`,
                     anchor: 'bottom left',
                     //rotation: { yaw: '10deg', pitch: '10deg', roll: 'deg' },
                     scale: {
                         zoom: [1, 1],
-                        yaw: [1, 1.5],
-                        pitch: [1, 1.5]
+                        yaw: [1, 1],
+                        pitch: [1, 1]
                     },
                     style: {
-                        maxWidth: '100px',
-                        color: 'white',
+                        // maxWidth: '100px',
+                        color: colorsShuffle[colorIndex].text,
+                        backgroundColor: colorsShuffle[colorIndex].color,
                         opacity: null,
                         marginLeft: '-1px',
                         paddingLeft: '5px',
                         paddingRight: '5px',
-                        backgroundColor: 'red',
-                        fontSize: '10px',
-                        fontFamily: 'Helvetica, sans-serif',
-                        textAlign: 'center',
+                        fontSize: '12px',
+                        textAlign: 'left',
                     }
                 });
             }
@@ -98,7 +142,7 @@
             return markerSet;
         }).flat();
 
-        console.log('Parsed markers:', markers);
+        // console.log('Parsed markers:', markers);
     }
 
     // Track viewer position and zoom changes
@@ -143,7 +187,6 @@
 
     onMount(async () => {
         parseMarkers();
-        console.log(markers);
         if (browser) {
             try {
                 let [{ Viewer, TextureLoader }, css, { MarkersPlugin }, markersCss] = await Promise.all([
@@ -184,8 +227,8 @@
                     });
 
                     viewer.addEventListener('position-updated', ({ position }) => {
-                        console.log(viewer.getZoomLevel())
-                        console.log(`new position is yaw: ${position.yaw} pitch: ${position.pitch}`);
+                        // console.log(viewer.getZoomLevel())
+                        // console.log(`new position is yaw: ${position.yaw} pitch: ${position.pitch}`);
                     });
                 });
 
