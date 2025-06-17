@@ -28,8 +28,6 @@
 
     let uniqueIds = [...new Set(markers.map(m => m.id))];
 
-
-
     onMount(() => {
         props.slides.forEach((slide, i) => {
             waypoints[i] = slide.coords.split(",").map(d => +d);
@@ -43,24 +41,42 @@
 	let textBlocks = [1,2,3]
 	let scrollY = $state(0);
 	let value = $state();
+    let valueSet = $state(null);
 	let percentScrolledValues = $state([]);
 
 	let position = $state([0, 0]);
 
+    $effect(() => {
+        if(value === undefined || value === null){
+            if(valueSet === null || valueSet === undefined){
+                valueSet = undefined;
+            }
+            else if (valueSet === props.slides.length - 1){
+                valueSet = props.slides.length - 1;
+            }
+            else {
+                valueSet = value;
+            }
+        }
+        else {
+            valueSet = value;
+        }
+    });
+
 	$effect(() => {
         if(waysSet) {
-            if (value === undefined || value === null) {
+            if (valueSet === undefined || valueSet === null) {
                 position = props.default_coords.split(",").map(d => +d);
                 zoom = 50;
                 return;
             }
             
-            const currentZoom = zoomLevels[value] ? zoomLevels[value] : 50;
-            const prevZoom = zoomLevels[value - 1] ?? 50;
+            const currentZoom = zoomLevels[valueSet] ? zoomLevels[valueSet] : 50;
+            const prevZoom = zoomLevels[valueSet - 1] ?? 50;
 
-            const currentWaypoint = waypoints[value] ?? waypoints[0];
-            const prevWaypoint = waypoints[value - 1] ?? props.default_coords.split(",").map(d => +d);
-            const rawProgress = percentScrolledValues[value] ?? 0;
+            const currentWaypoint = waypoints[valueSet] ?? waypoints[0];
+            const prevWaypoint = waypoints[valueSet - 1] ?? props.default_coords.split(",").map(d => +d);
+            const rawProgress = percentScrolledValues[valueSet] ?? 0;
             
             // Apply easing to the progress
             const easedProgress = easeCubicInOut(rawProgress);
@@ -123,9 +139,8 @@
 
 <svelte:boundary onerror={(e) => console.error(e)}>
 	{#if waysSet}
-        {@const thing = getProgressStep(percentScrolledValues[value], uniqueIds.length)}
         <div class="wrapper" id={type}>
-            <div class="container value-{value} percent-{thing} {value || value === 0 ? 'container-visible' : ''}" style="height: {height}px;">
+            <div class="container value-{valueSet} {value || value === 0 ? 'container-visible' : ''}" style="height: {height}px;">
                 <!-- <p class="moving" style="left: {position[0]}%; background:black;color:white; font-family: monospace;">
                     Value: {value}, Progress: {percentScrolledValues[value] ? percentScrolledValues[value].toFixed(6) : '0.00'}, Position: {position.map(x => x.toFixed(6)).join(', ')}
                 </p> -->
@@ -134,7 +149,7 @@
                         panoramaUrl={panoramaUrl}
                         coords={position}
                         zoom={zoom ? zoom : 50}
-                        value={value}
+                        value={valueSet}
                         markersRaw={markers}
                     />
                 {/if}
@@ -147,7 +162,7 @@
                     increments={10}
                 >
                     {#each props.slides as step, i}
-                        {@const active = value === i}
+                        {@const active = valueSet === i}
                         {@const isFirst = i === 0}
                         {@const isFirstIntro = i === 0 && count === "first"}
                         {@const isLast = i === props.slides.length - 1}
@@ -181,7 +196,7 @@
 		height: 100%;
 		width: 100%;
 		pointer-events: none;
-        opacity: 0;
+        opacity: .2;
         transition: opacity 0.5s ease-in-out;
 	}
 
