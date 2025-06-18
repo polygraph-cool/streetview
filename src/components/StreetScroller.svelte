@@ -1,6 +1,7 @@
 <script>
 	import StreetView from "./StreetView.svelte";
 	import useWindowDimensions from "$runes/useWindowDimensions.svelte.js";
+    import debounce from "lodash.debounce";
 	import { easeCubicInOut } from 'd3-ease';
     import { onMount } from "svelte";
 	import Scrolly from "$components/helpers/Scrolly.svelte";
@@ -13,21 +14,6 @@
     let zoom = $state(50);
     let zoomLevels = {};
 
-
-    function getProgressStep(progress, length) {
-        if (length === 0) return 0;
-        const threshold = 1 / (length + 1);
-        for (let i = 1; i <= length; i++) {
-            if (progress > threshold * i) {
-                continue;
-            }
-            return i;
-        }
-        return length;
-    }
-
-    let uniqueIds = [...new Set(markers.map(m => m.id))];
-
     onMount(() => {
         props.slides.forEach((slide, i) => {
             waypoints[i] = slide.coords.split(",").map(d => +d);
@@ -38,13 +24,15 @@
 
 	
 	let _triggerArt = $state([]);
-	let textBlocks = [1,2,3]
 	let scrollY = $state(0);
 	let value = $state();
     let valueSet = $state(null);
 	let percentScrolledValues = $state([]);
 
 	let position = $state([0, 0]);
+
+    // Create a debounced function for setting position
+
 
     $effect(() => {
         if(value === undefined || value === null){
@@ -64,10 +52,19 @@
     });
 
 	$effect(() => {
+
+        const debouncedSetPosition = debounce((newPosition, newZoom) => {
+			if(newPosition !== undefined && newPosition !== null){
+				position = newPosition.map(d => +d.toFixed(6));
+			}
+			if(newZoom !== undefined && newZoom !== null){
+				zoom = +newZoom.toFixed(6);
+			}
+        }, 70);
+
         if(waysSet) {
             if (valueSet === undefined || valueSet === null) {
-                position = props.default_coords.split(",").map(d => +d);
-                zoom = 50;
+                debouncedSetPosition(props.default_coords.split(",").map(d => +d),50);
                 return;
             }
             
@@ -84,8 +81,10 @@
             // Interpolate both coordinates using eased progress
             const x = prevWaypoint[0] + (currentWaypoint[0] - prevWaypoint[0]) * easedProgress;
             const y = prevWaypoint[1] + (currentWaypoint[1] - prevWaypoint[1]) * easedProgress;
-            zoom = prevZoom + (currentZoom - prevZoom) * easedProgress;
-            position = [x, y];
+            const zoomed = Math.round(prevZoom + (currentZoom - prevZoom) * easedProgress);
+
+            // Use debounced function instead of direct assignment
+            debouncedSetPosition([x, y],zoomed);
         }
 	});
 
@@ -94,12 +93,6 @@
 	}
 
 	$effect(() => {
-
-        // console.log(dimensions,dimensions.height);
-
-        // let dim = new useWindowDimensions();
-		// console.log(dim,dim.height,dimensions.height);
-
 
 		percentScrolledValues = _triggerArt.map((el, i) => {
 			// Get the element's position relative to the top of the page
@@ -125,7 +118,10 @@
 			offset = constrain(offset, 0, sectionEnd - sectionStart);
 			
 			// Calculate the percentage through the section
-			let percentScrolled = offset / (sectionEnd - sectionStart);
+			// Round to nearest 200th (0.005)
+			let percentScrolled = Math.round((offset / (sectionEnd - sectionStart)) * 200) / 200;
+			// let percentScrolled = offset / (sectionEnd - sectionStart);
+            // console.log(percentScrolled, type)
 			return constrain(percentScrolled, 0, 1);
 		});
 	});
@@ -151,6 +147,7 @@
                         zoom={zoom ? zoom : 50}
                         value={valueSet}
                         markersRaw={markers}
+                        type={type}
                     />
                 {/if}
             </div>

@@ -4,11 +4,14 @@
     import data from "$data/annotations.csv";
     import { scaleLinear } from "d3-scale";
 
-    let { panoramaUrl, coords, zoom, value, markersRaw } = $props();
+    let { panoramaUrl, coords, zoom, value, markersRaw, type } = $props();
     let viewerContainer;
     let viewer;
     let opacity = $state(0);
     let isViewerReady = $state(false);
+
+    let prevCoords = $state([0, 0]);
+    let prevZoom = $state(0);
 
 
     let colors = [
@@ -149,40 +152,22 @@
     $effect(() => {
         // Explicitly track coords as a dependency
         const currentCoords = coords;
-        
-        if (viewer && currentCoords) {
-            // console.log('currentCoords', currentCoords);
+        if (
+            viewer && currentCoords &&
+            currentCoords[0] !== prevCoords[0] &&
+            currentCoords[1] !== prevCoords[1]
+        ) {
+            console.log(type);
+
+        // console.log(type, currentCoords, zoom);
             viewer.rotate({
                 yaw: currentCoords[0],
                 pitch: currentCoords[1],
             });
             viewer.zoom(zoom);
+            prevCoords = currentCoords;
+            prevZoom = zoom;
         }
-    });
-
-    // Watch for value changes to update panorama
-    $effect(() => {
-        const currentValue = value;
-        // if (viewer && resolutionPlugin) {
-        //     if (currentValue > 2) {
-        //     resolutionPlugin.setResolution('HD')
-        //         .then(() => {
-        //             console.log('Resolution changed to HD');
-        //         })
-        //         .catch(error => {
-        //             console.error('Failed to change resolution:', error);
-        //         });
-        //     } else {
-        //         resolutionPlugin.setResolution('SD')
-        //             .then(() => {
-        //                 console.log('Resolution changed to HD');
-        //             })
-        //             .catch(error => {
-        //                 console.error('Failed to change resolution:', error);
-        //             });
-  
-        //     }
-        // }
     });
 
     onMount(async () => {

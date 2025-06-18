@@ -1,11 +1,11 @@
 <script>
 	import StreetScroller from "./StreetScroller.svelte";
+	import Carousel from "./Carousel.svelte";
 	import { browser } from '$app/environment';
 	import { getContext, onMount } from "svelte";
 	import useWindowDimensions from "$runes/useWindowDimensions.svelte.js";
 	import data from "$data/annotations.csv";
 	import Section from "./Section.svelte";
-	import { div } from "three/tsl";
 	let mounted = $state(false);
 	let height = $state(null);
 	let markersByBlock = data.reduce((acc, marker) => {
@@ -40,6 +40,8 @@
 </script>
 
 
+<!-- svelte-ignore a11y_missing_attribute -->
+<!-- svelte-ignore a11y_media_has_caption -->
 <svelte:boundary onerror={(e) => console.error(e)}>
 
 
@@ -52,25 +54,39 @@
 			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/>
 		{:else if type === "intro3"}
 			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/>
+		{:else if type === "imageGridVideo"}
+			<div class="text-section">
+				<img src="assets/images/song.png" style="margin-bottom:50px;">
+				<button style="margin-bottom:50px;">Show me another set of images 🔀</button>
+				<video src="assets/images/NYCText.mp4" controls></video>
+			</div>
+		{:else if type === "carousel"}
+			<Carousel />
+		{:else if type === "head"}
+			<div class="head" style="">
+				<h1>{copy.meta.title}</h1>
+				<h3>{copy.meta.description}</h3>
+				<p>{copy.meta.byline}</p>
+			</div>	
 		{:else if type === "section"}
 			<div class="text-section {props.className}">
+				
 				{#each props.section || [] as { type, value: props, component }, idx (idx)}
+
 					{#if type === "text"}
 						<p>{@html props}</p>
 					{/if}
+
+					{#if type === "image"}
+						<img src={props.media} style="margin-bottom:50px;">
+					{/if}
+
 				{/each}
 			</div>
-
-	  	
 		{/if}
 	{/each}
 
 
-	<div class="head" style="">
-		<h1>{copy.meta.title}</h1>
-		<h3>{copy.meta.description}</h3>
-		<p>{copy.meta.byline}</p>
-	</div>
 {/if}
 
 
@@ -86,6 +102,19 @@
 </svelte:boundary>
 
 <style>
+	button {
+		background:black;
+		color:white;
+		margin:0 auto;
+		display:block;
+		border:1px solid #232323;
+		padding:10px 20px;
+		border-radius:15px;
+		font-family: var(--sans);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		font-size: 18px;
+	}
 	.head {
 		font-family: 'Atlas Grotesk';
 		text-align: center;
@@ -95,15 +124,5 @@
 	.intro {
 		background-color: red;
 	}
-
-	.text-section {
-		font-family: var(--sans);
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		font-size: 18px;
-		max-width: 600px;
-		margin: 0 auto;
-		padding: 100px 0;
-	}	
 
 </style>
