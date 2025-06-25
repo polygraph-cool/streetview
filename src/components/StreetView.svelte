@@ -141,9 +141,12 @@
                     }
                 });
             }
+
             
             return markerSet;
         }).flat();
+
+        console.log(markers)
 
         // console.log('Parsed markers:', markers);
     }

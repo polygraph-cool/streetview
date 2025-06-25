@@ -105,11 +105,14 @@
             // console.log(el,i)
 			// Check if element has isLast class
 			const isLast = el.classList.contains('isLast');
+			const isFirstIntro = el.classList.contains('isFirstIntro');
             let sectionStart = elementTop - (elementHeight*1.5);//dimensions.height;
             if(isLast){
                 sectionStart = elementTop - (elementHeight);//dimensions.height;
-
             }
+			if(isFirstIntro){
+				sectionStart = elementTop - (elementHeight);//dimensions.height;
+			}
 			// const sectionStart = elementTop - (elementHeight*1.5);//dimensions.height;
 			const sectionEnd = elementTop - 200;
 			
@@ -137,7 +140,23 @@
 	{#if waysSet}
         <div class="wrapper" id={type}>
             <div class="container value-{valueSet} {value || value === 0 ? 'container-visible' : ''}" style="height: {height}px;">
-                <!-- <p class="moving" style="left: {position[0]}%; background:black;color:white; font-family: monospace;">
+				{#if count === "first"}
+	
+					<div class="opener" style="opacity:{percentScrolledValues[0] ? (1-percentScrolledValues[0]) : 1};">
+						<p class="text-fg" style="opacity: 1">
+							<span class="text-inner">{props.slides[0].text}</span>
+						</p>
+						<p aria-hidden="true" class="text-bg" style="opacity: 1">
+							<span class="text-inner">{props.slides[0].text}</span>
+						</p>
+					</div>
+
+					<div class="screen" style="opacity:{percentScrolledValues[0] ? (1-percentScrolledValues[0]) : 1};">
+
+					</div>
+				{/if}
+
+                <!-- <p class="moving" style="left: {position[0]}%; background:black;color:white; font-family: monospace; z-index: 10000000000000;">
                     Value: {value}, Progress: {percentScrolledValues[value] ? percentScrolledValues[value].toFixed(6) : '0.00'}, Position: {position.map(x => x.toFixed(6)).join(', ')}
                 </p> -->
                 {#if position}
@@ -151,7 +170,7 @@
                     />
                 {/if}
             </div>
-            <div class="text">
+            <div class="text" style="">
                 <Scrolly 
                     bind:value 
                     top={height/2} 
@@ -184,9 +203,6 @@
 
 <style>
 
-    .isFirstIntro {
-        /* height: var(--height); */
-    }
     .container {
 		position: sticky;
 		top: 0;
@@ -302,4 +318,63 @@
 		padding: 0;
 		overflow-x: hidden;
 	}
+
+	.openerNew {
+		font-family: var(--sans);
+		font-size: 64px;
+		top: 50%;
+		transform: translate(0,-50%);
+		width: calc(100% - 200px);
+		margin: 0 auto;
+		left: 0;
+		line-height: 1.1;
+		right: 0;
+		text-align: center;
+	}
+
+	.screen {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0,0,0,.5);
+		z-index: 10000;
+		height: 100vh;
+		width: 100%;
+	}
+
+	.opener {
+		height: 100vh;
+		width: 100%;
+		max-width: 500px;
+		position: absolute;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		z-index: 10000000000;
+	}
+
+	.opener .text-fg {
+		opacity: 1;
+		z-index: 10000000000;
+		color: white;
+	}
+	
+	.opener .text-bg span {
+		background: #000;
+		box-shadow: 15px 0 #000, -15px 0 #000;
+	}
+
+	.opener .text-fg, .opener .text-bg {
+		font-family: var(--sans);
+		text-align: center;
+		font-size: 48px;
+	}
+
+	.opener p {
+		top: 50%;
+		transform: translate(0,-50%);
+	}
+	
 </style>
