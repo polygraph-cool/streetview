@@ -58,9 +58,9 @@
 		{#if type === "intro"}
 			<StreetScroller {props} {type} markers={markersByBlock[type]} count={"first"} height={height}/>
 		{:else if type === "intro2"}
-			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/> -->
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/>
 		{:else if type === "intro3"}
-			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/> -->
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/>
 		{:else if type === "imageGridVideo"}
 			<div class="text-section">
 				<!-- <img src="assets/images/song.png" style="margin-bottom:50px;"> -->
@@ -71,7 +71,9 @@
 			<div class="grid-section">
 				{#each props.slides as slide, i}
 					<div class="text-section">
-						<p>{slide.text}</p>
+						<!-- <p>{slide.text}</p> -->
+						 <p>The result is a search engine of much of what’s written in NYC’s streets, but limited to text that a Google Streetview car can capture; we’re, of course, missing text from places such as alleyways and parks, or anything too small to be viewable by the camera.
+						 </p>
 					</div>
 
 					<GridScroller height={height} slide={slide} />
@@ -125,7 +127,6 @@
 </svelte:boundary>
 
 <style>
-
 	.map-section-title {
 		font-size: 18px;
 		margin-top: 60px;

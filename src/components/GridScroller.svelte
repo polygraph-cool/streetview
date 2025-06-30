@@ -1,6 +1,10 @@
 <script>
 	import useWindowDimensions from "$runes/useWindowDimensions.svelte.js";
 	import Scrolly from "$components/helpers/Scrolly.svelte";
+	// import ExternalLink from "lucide-svelte/icons/external-link";
+	// import DollarSign from "lucide-svelte/icons/dollar";
+    import ExternalLink from "@lucide/svelte/icons/external-link";
+
 
     let { height, slide } = $props();
 
@@ -12,18 +16,50 @@
 	let dimensions = new useWindowDimensions();
 
 
-    $effect(() => {
-        console.log(value, valueSet)
-    })
-
-
-    let locations = [
-        {
-            lat: "https://www.google.com",
-            long: "https://www.google.com",
-            text: "59th and 60th"
-        }
-    ]
+    let locations = {
+        "fuhgeddaboudit": [
+            {
+                link: "https://maps.app.goo.gl/bYudE84yY6HNNbAy5",
+                text: "BQE, Verrazzano bridge"
+            },
+            {
+                link: "https://maps.app.goo.gl/fPHRL6mHCtoCftV56",
+                text: "Belt Parkway, Bay Ridge"
+            },
+            {
+                link: "https://maps.app.goo.gl/T1bsX9mAN8kWm9AX7",
+                text: "104-9 109th St, Queens"
+            },
+            {
+                link: "https://maps.app.goo.gl/UaEH9w7C2BDDvvQf8",
+                text: "Belt Parkway, East New York"
+            },
+            {
+                link: "https://maps.app.goo.gl/2ZPFZybdpGy3tY9W8",
+                text: "11-12 44th Dr, Queens"
+            },
+            {
+                link: "https://maps.app.goo.gl/xYZTVZk1ab8Mkhd26",
+                text: "531 Atlantic Ave, Brooklyn"
+            },
+            {
+                link: "https://maps.app.goo.gl/Ey7CNC7w4f21iEMw6",
+                text: "808 3rd Ave, Brooklyn"
+            }
+        ],
+        "loitering": [
+            {
+                link: "https://www.google.com/maps/@40.618176,-74.02476,3a,20y,270.04h,95.77t/data=!3m6!1e1!3m4!1sIMkbEoEa5gjovyj76pt06w!2e0!7i16384!8i8192?entry=ttu",
+                text: "BQE, Verrazzano bridge"
+            }
+        ],
+        "restrooms": [
+            {
+                link: "https://www.google.com/maps/@40.618176,-74.02476,3a,20y,270.04h,95.77t/data=!3m6!1e1!3m4!1sIMkbEoEa5gjovyj76pt06w!2e0!7i16384!8i8192?entry=ttu",
+                text: "BQE, Verrazzano bridge"
+            }
+        ]
+    }
 
     let slides = [1,2,3,4,5,6,7,8,9,10,11,12,13];
     function constrain(n, low, high) {
@@ -183,43 +219,49 @@
 
 <svelte:window bind:scrollY />
 
-
-<div class="wrapper">
-    <div class="container value-{valueSet} {value || value === 0 ? 'container-visible' : ''}">
-        <div class="container-inner" style="height: {height}px;">
-            <p>{slide.title}</p>
+{#if slide}
+    <div class="wrapper">
+        <div class="container value-{valueSet} {value || value === 0 ? 'container-visible' : ''}">
+            <div class="container-inner" style="height: {height}px;">
+                <p>{slide.title}</p>
+            </div>
         </div>
-    </div>
-    <div class="text" style="">
-        <Scrolly bind:value top={height/2} bottom={100} increments={10}>
-            {#each [1] as grid, i}
+        <div class="text" style="">
+            <Scrolly bind:value top={height/2} bottom={100} increments={10}>
                 <div class="example-grid">
-                    {#each slides as slide, i}
-                        {@const count = i % 13}
+                    {#each locations[slide.images] as gridSlide, i}
+                        {@const count = i % locations[slide.images].length}
                         <div class="example-grid-item item-{i}" bind:this={_triggerArt[i]}
                             style="grid-column-start: {slideStyles[count].gridColumnStart}; justify-content: {slideStyles[count].justifyContent}; justify-self: {slideStyles[count].justifySelf};"
                         >
-                            <img style="max-width: 140px; height: auto;" alt="" class="" src="assets/images/sign.png">
-                            <span class="grid-item-text"><a href="https://www.google.com/maps/@40.618176,-74.02476,3a,20y,270.04h,95.77t/data=!3m6!1e1!3m4!1sIMkbEoEa5gjovyj76pt06w!2e0!7i16384!8i8192" target="_blank">{locations[0].text}</a></span>
+                            <a href="{locations[slide.images][i].link}" target="_blank"><img style="height: auto;" alt="" class="" src="assets/images/{slide.images}_{i}.jpg"></a>
+                            <span class="grid-item-text">{locations[slide.images][i].text}<a href="{locations[slide.images][i].link}" target="_blank"><ExternalLink color="white" /></a></span>
                         </div>
                     {/each}
                 </div>
-            {/each}
-        </Scrolly>
+            </Scrolly>
+        </div>
     </div>
-</div>
+{/if}
 
 
 
 <style>
+    .text {
+        margin-top: 150px;
+    }
+    .wrapper {
+        margin-bottom: 100px;
+    }
     .container {
         position: sticky;
 		top: 0;
 		height: 1px;
 		width: 100%;
 		pointer-events: none;
-        opacity: .2;
+        opacity: 0;
         transition: opacity 0.5s ease-in-out;
+        z-index: -1;
     }
     .container-inner {
         height: 100%;
@@ -230,36 +272,59 @@
         bottom: 0;
     }
     .container-visible {
-        opacity: 1;
+        opacity: .2;
     }
 
     .grid-item-text {
-        font-family: var(--mono);
+        font-family: var(--sans);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        font-size: 12px;
-        font-size: 12px;
         margin-top: 5px;
-        opacity: .9;
+        color: rgba(255, 255, 255, 0.4);
+        text-decoration-color: currentColor;
+        font-weight: 400;
+        font-size: 10px;
+        /* text-transform: uppercase; */
+        max-width: 140px;
+        line-height: 1.2;
+        width: calc(100% - 10px);
+        text-align: center;
     }
 
     .grid-item-text a {
-        color: #74FCD0;
+        color: white;
         text-decoration-color: currentColor;
-        font-weight: 400;
+        width: 1.5em;
+        display: inline-block;
+		height: 1.5em;
+		border-radius: 50%;
+		text-align: center;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		margin-left: 3px;
+		padding: 2px;
     }
 
-    .container p {
+    .container-inner p {
         position: absolute;
-        top: 50%;
+        top: 0%;
         left: 0;
         right: 0;
         color: #fff;
         text-align: center;
-        transform: translate(0%, -50%);
+        transform: translate(0%, 0%);
         font-size: 100px;
         font-weight: 400;
-        z-index: 100;
+        /* font-family: var(--serif); */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 96px;
+        line-height: 1.2;
+        font-family: var(--sans);
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: -7px;
     }
 
 	.example-grid {
@@ -268,7 +333,8 @@
         max-width: 740px;
 		gap: 20px 20px;
 		grid-template-columns: auto auto auto;
-		grid-template-rows: 30vh 30vh 30vh 30vh 30vh 30vh 30vh;
+        grid-auto-rows: 30vh;
+		/* grid-template-rows: 30vh 30vh 30vh 30vh 30vh 30vh 30vh; */
 		justify-items: center;
         margin: 0 auto 0;
 		/* max-width: calc(100vw - 40px);	 */
@@ -277,7 +343,7 @@
 	.example-grid-item {
 		display: flex;
 		flex-direction: column;
-		max-width: 200px;
+		max-width: 500px;
 		align-items: center;
 		justify-content: center;
         opacity: 0;
@@ -286,6 +352,7 @@
 
     .example-grid-item img {
         border-radius: 8px;
+        max-width: 140px;
     }
 
 </style>
