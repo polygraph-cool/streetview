@@ -1,4 +1,5 @@
 <script>
+	import GridScroller from "./GridScroller.svelte";
 	import StreetScroller from "./StreetScroller.svelte";
 	import Carousel from "./Carousel.svelte";
 	import { browser } from '$app/environment';
@@ -57,17 +58,25 @@
 		{#if type === "intro"}
 			<StreetScroller {props} {type} markers={markersByBlock[type]} count={"first"} height={height}/>
 		{:else if type === "intro2"}
-			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/>
+			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/> -->
 		{:else if type === "intro3"}
-			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/>
+			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/> -->
 		{:else if type === "imageGridVideo"}
 			<div class="text-section">
 				<!-- <img src="assets/images/song.png" style="margin-bottom:50px;"> -->
 				<!-- <button style="margin-bottom:50px;">Show me another set of images 🔀</button> -->
 				 <VideoPlayer />
 			</div>
-		{:else if type === "carousel"}
-			<Carousel />
+		{:else if type === "gridScroller"}
+			<div class="grid-section">
+				{#each props.slides as slide, i}
+					<div class="text-section">
+						<p>{slide.text}</p>
+					</div>
+
+					<GridScroller height={height} slide={slide} />
+				{/each}
+			</div>			
 		{:else if type === "head"}
 			<div class="head" style="">
 				<h1>{copy.meta.title}</h1>
@@ -75,11 +84,16 @@
 				<p>{copy.meta.byline}</p>
 			</div>
 		{:else if type === "maps"}
+			<h4 class="map-section-title">{props.mapsTitle}</h4>
+
 			<div class="map-section">
 				{#each props.slides as slide, i}
 					<div class="map-slide">
-						<p>{@html slide.title}</p>
-						<p>{@html slide.text}</p>
+						<div class="map-slide-text-wrapper">
+							<p class="map-slide-title">{@html slide.title}</p>
+							<p class="map-slide-text">{@html slide.text}</p>
+						</div>
+						
 						<img src="assets/images/{slide.img}" style="margin-bottom:50px;">
 					</div>
 				{/each}
@@ -102,22 +116,63 @@
 	{/each}
 
 
+	
+
+
+
 {/if}
 
 </svelte:boundary>
 
 <style>
+
+	.map-section-title {
+		font-size: 18px;
+		margin-top: 60px;
+		font-weight: 400;
+		text-align: left;
+		max-width: 600px;
+		margin: 0 auto;
+		font-family: var(--sans);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		margin-bottom: 30px;
+		opacity: .6;
+	}
 	.map-section {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 20px;
-		max-width: 800px;
+		max-width: 600px;
 		margin: 0 auto;
 		font-family: var(--sans);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+	.map-slide-text-wrapper {
+		height: 120px;
+	}
+	.map-slide {
+		/* display: flex; */
+		/* flex-direction: column; */
+		/* align-items: flex-start; */
+		/* justify-content: flex-end; */
 	}
 	.map-slide img {
 		border-radius: 10px;
 		border: 1px solid #3F3F3F;
+	}
+	.map-slide-title {
+		font-size: 24px;
+		font-weight: 400;
+		margin-bottom: 0px;
+		margin-top: 0px;
+	}
+	.map-slide-text {
+		font-size: 14px;
+		line-height: 1.5;
+		opacity: .8;
+		margin-top: 0px;
 	}
 	.masthead {
 		position: relative;

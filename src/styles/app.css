@@ -216,3 +216,24 @@ a {
 	margin: 0 auto;
 	padding: 50px 0;
 }	
+
+.map-slide-text a {
+	background-color: #3F3F3F;
+	color: #fff;
+	font-size: 12px;
+	font-weight: 400;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	padding: 2px 8px;
+	border-radius: 10px;
+	text-decoration: none;
+	text-decoration-color: #fff;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+	text-decoration: underline;
+	text-decoration-color: #999;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 1px;
+	white-space: nowrap;
+
+}
