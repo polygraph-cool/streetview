@@ -86,11 +86,11 @@
 				<p>{copy.meta.byline}</p>
 			</div> -->
 		{:else if type === "maps"}
-			<!-- <h4 class="map-section-title">{props.mapsTitle}</h4>
+			<h4 class="map-section-title">{props.mapsTitle}</h4>
 
 			<div class="map-section">
 				{#each props.slides as slide, i}
-					<div class="map-slide">
+					<div class="map-slide map-slide-{slide.width}">
 						<div class="map-slide-text-wrapper">
 							<p class="map-slide-title">{@html slide.title}</p>
 							<p class="map-slide-text">{@html slide.text}</p>
@@ -99,7 +99,7 @@
 						<img src="assets/images/{slide.img}" style="margin-bottom:50px;">
 					</div>
 				{/each}
-			</div> -->
+			</div>
 
 		{:else if type === "section"}
 			<!-- <div class="text-section {props.className}">
@@ -115,7 +115,7 @@
 				{/each}
 			</div> -->
 		{:else if type === "ranking"}
-			<Ranking {height} {props} />
+			<!-- <Ranking {height} {props} /> -->
 		{/if}
 	{/each}
 
@@ -161,6 +161,11 @@
 		/* flex-direction: column; */
 		/* align-items: flex-start; */
 		/* justify-content: flex-end; */
+	}
+
+	.map-slide-full {
+		width: 100%;
+		grid-column: 1 / -1;
 	}
 	.map-slide img {
 		border-radius: 10px;
