@@ -71,12 +71,12 @@
 		{:else if type === "gridScroller"}
 			<div class="grid-section">
 				{#each props.slides as slide, i}
-					<!-- <div class="text-section">
+					<div class="text-section">
 						 <p>The result is a search engine of much of what’s written in NYC’s streets, but limited to text that a Google Streetview car can capture; we’re, of course, missing text from places such as alleyways and parks, or anything too small to be viewable by the camera.
 						 </p>
 					</div>
 
-					<GridScroller height={height} slide={slide} /> -->
+					<GridScroller height={height} slide={slide} />
 				{/each}
 			</div>			
 		{:else if type === "head"}
@@ -86,7 +86,7 @@
 				<p>{copy.meta.byline}</p>
 			</div> -->
 		{:else if type === "maps"}
-			<h4 class="map-section-title">{props.mapsTitle}</h4>
+			<!-- <h4 class="map-section-title">{props.mapsTitle}</h4>
 
 			<div class="map-section">
 				{#each props.slides as slide, i}
@@ -99,7 +99,7 @@
 						<img src="assets/images/{slide.img}" style="margin-bottom:50px;">
 					</div>
 				{/each}
-			</div>
+			</div> -->
 
 		{:else if type === "section"}
 			<!-- <div class="text-section {props.className}">
