@@ -7,5 +7,10 @@ export default [
 		"id": "1SVS5Eqw2OvDwRxiyIKLFhF33i7ecYYIRxz0Ybbl69X4",
 		"gid": "0",
 		"filepath": "src/data/annotations.csv"
+	},
+	{
+		"id": "1SVS5Eqw2OvDwRxiyIKLFhF33i7ecYYIRxz0Ybbl69X4",
+		"gid": "532340784",
+		"filepath": "src/data/rank.csv"
 	}
 ]

@@ -158,57 +158,15 @@
     $effect(() => {
         if (scrollY && value == 0) {
             _triggerArt.forEach((el, i) => {
-                // let trigger = el.getBoundingClientRect().top - dimensions.height;
-                // document
-                //     .querySelector(".g-immersive-text-positioner." + el.id)
-                //     .getBoundingClientRect().top - $viewportHeight;
                 const elementTop = el.getBoundingClientRect().top - dimensions.height + 300;
-                // const elementHeight = el.getBoundingClientRect().height;
-                
-                let offset = scrollY - elementTop - (dimensions.height/2);
-                // offset = constrain(offset, 0, sectionEnd - sectionStart);
-                // if(i === 0 || i == 6){
-                //     console.log(i,elementTop,scrollY,offset)
-                // }
                 if(elementTop < 0){
                     el.style.opacity = 1;
                 }
                 else {
                     el.style.opacity = 0;
                 }
-                // console.log(elementTop, elementHeight, scrollY)
-                // if (i == 0 && trigger < 0) {
-                // el.style.opacity = 1;
-                // showLabels = true;
-                // }
-                // else if (i !== 0 && trigger <= 0) {
-                // el.style.opacity = 1;
-                // } else if (i !== 0 && trigger > 0) {
-                // el.style.opacity = 0;
-                // }
-                // else if (i==0){
-                // el.style.opacity = 1;
-                // showLabels = false;
-                // }
-                // else {
-                // el.style.opacity = 0;
-                // }
             });
 
-            // let sectionOutStart =
-            //     container.offsetTop +
-            //     container.getBoundingClientRect().height -
-            //     $viewportHeight * 2;
-            // let sectionOutEnd = sectionOutStart + $viewportHeight / 2;
-
-            // if ($y > sectionOutStart) {
-            //     container.style.opacity =
-            //     1 - getPercentScrolled($y, sectionOutStart, sectionOutEnd);
-            // } else if ($y > sectionOutEnd) {
-            //     container.style.opacity = 0;
-            // } else if ($y < sectionOutStart) {
-            //     container.style.opacity = 1;
-            // }
     }
 })
 
@@ -275,6 +233,53 @@
         opacity: .2;
     }
 
+    .container-inner p {
+        position: absolute;
+        top: 0%;
+        left: 0;
+        right: 0;
+        color: #fff;
+        text-align: center;
+        transform: translate(0%, 0%);
+        font-size: 100px;
+        font-weight: 400;
+        /* font-family: var(--serif); */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-size: 96px;
+        line-height: 1.2;
+        font-family: var(--sans);
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: -7px;
+    }
+
+	.example-grid {
+		position: relative;
+		display: grid;
+        max-width: 900px;
+		gap: 20px 20px;
+		grid-template-columns: auto auto auto;
+        grid-auto-rows: 45vh;
+		justify-items: center;
+        margin: 0 auto 0;
+	}
+
+	.example-grid-item {
+		display: flex;
+		flex-direction: column;
+		max-width: 500px;
+		align-items: center;
+		justify-content: center;
+        opacity: 0;
+		transition: opacity 0.3s ease-in-out;
+	}
+
+    .example-grid-item img {
+        border-radius: 8px;
+        max-width: 200px;
+    }
+
     .grid-item-text {
         font-family: var(--sans);
         -webkit-font-smoothing: antialiased;
@@ -306,53 +311,5 @@
 		padding: 2px;
     }
 
-    .container-inner p {
-        position: absolute;
-        top: 0%;
-        left: 0;
-        right: 0;
-        color: #fff;
-        text-align: center;
-        transform: translate(0%, 0%);
-        font-size: 100px;
-        font-weight: 400;
-        /* font-family: var(--serif); */
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        font-size: 96px;
-        line-height: 1.2;
-        font-family: var(--sans);
-        font-weight: 400;
-        text-transform: uppercase;
-        letter-spacing: -7px;
-    }
-
-	.example-grid {
-		position: relative;
-		display: grid;
-        max-width: 740px;
-		gap: 20px 20px;
-		grid-template-columns: auto auto auto;
-        grid-auto-rows: 30vh;
-		/* grid-template-rows: 30vh 30vh 30vh 30vh 30vh 30vh 30vh; */
-		justify-items: center;
-        margin: 0 auto 0;
-		/* max-width: calc(100vw - 40px);	 */
-	}
-
-	.example-grid-item {
-		display: flex;
-		flex-direction: column;
-		max-width: 500px;
-		align-items: center;
-		justify-content: center;
-        opacity: 0;
-		transition: opacity 0.3s ease-in-out;
-	}
-
-    .example-grid-item img {
-        border-radius: 8px;
-        max-width: 140px;
-    }
 
 </style>
