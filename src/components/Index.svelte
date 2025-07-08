@@ -76,7 +76,7 @@
 						 </p>
 					</div>
 
-					{#if slide.images == "acab" || slide.images == "fuhgeddaboudit"}
+					{#if ["acab", "fuhgeddaboudit", "covid","fuck"].indexOf(slide.images) > -1}
 						<GridScroller height={height} slide={slide} />
 					{/if}
 				{/each}

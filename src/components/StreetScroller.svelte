@@ -51,16 +51,16 @@
         }
     });
 
-	$effect(() => {
-
-        const debouncedSetPosition = debounce((newPosition, newZoom) => {
+	const debouncedSetPosition = debounce((newPosition, newZoom) => {
 			if(newPosition !== undefined && newPosition !== null){
 				position = newPosition.map(d => +d.toFixed(6));
 			}
 			if(newZoom !== undefined && newZoom !== null){
 				zoom = +newZoom.toFixed(6);
 			}
-        }, 70);
+    }, 10);
+
+	$effect(() => {
 
         if(waysSet) {
             if (valueSet === undefined || valueSet === null) {
@@ -102,7 +102,6 @@
             
 			// Calculate the start and end points for the scroll animation
 
-            // console.log(el,i)
 			// Check if element has isLast class
 			const isLast = el.classList.contains('isLast');
 			const isFirstIntro = el.classList.contains('isFirstIntro');
@@ -124,7 +123,6 @@
 			// Round to nearest 200th (0.005)
 			let percentScrolled = Math.round((offset / (sectionEnd - sectionStart)) * 200) / 200;
 			// let percentScrolled = offset / (sectionEnd - sectionStart);
-            // console.log(percentScrolled, type)
 			return constrain(percentScrolled, 0, 1);
 		});
 	});

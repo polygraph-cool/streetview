@@ -151,16 +151,20 @@
         // console.log('Parsed markers:', markers);
     }
 
+
     // Track viewer position and zoom changes
     $effect(() => {
         // Explicitly track coords as a dependency
+
+
+
         const currentCoords = coords;
         if (
             viewer && currentCoords &&
             currentCoords[0] !== prevCoords[0] &&
             currentCoords[1] !== prevCoords[1]
         ) {
-            console.log(type);
+            
 
         // console.log(type, currentCoords, zoom);
             viewer.rotate({
@@ -189,8 +193,7 @@
                     container: viewerContainer,
                     panorama: panoramaUrl,
                     navbar: false,
-                    loading_html: null,
-                    loading_img: null,
+                    loadingImg: null,
                     defaultPitch: 6.18,
                     defaultYaw: -.002,
                     plugins: [

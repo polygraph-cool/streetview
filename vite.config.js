@@ -29,5 +29,13 @@ export default defineConfig({
 	},
 	ssr: {
 		noExternal: ["bits-ui"]
+	},
+	optimizeDeps: {
+		exclude: ['three']
+	},
+	build: {
+		rollupOptions: {
+			external: ['three']
+		}
 	}
 });
