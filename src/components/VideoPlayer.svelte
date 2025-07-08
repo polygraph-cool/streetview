@@ -41,7 +41,7 @@
 		bind:this={videoEl}
         bind:currentTime={currentTime}
         bind:duration={videoDuration}
-		src="/assets/images/NYCText.mp4"
+		src="assets/images/NYCText.mp4"
 		loop
 		muted={isMuted}
 		playsinline
