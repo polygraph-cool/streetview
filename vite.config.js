@@ -24,18 +24,20 @@ export default defineConfig({
 			$runes: path.resolve("./src/runes"),
 			$styles: path.resolve("./src/styles"),
 			$svg: path.resolve("./src/svg"),
-			$utils: path.resolve("./src/utils")
+			$utils: path.resolve("./src/utils"),
+			three: path.resolve("./node_modules/three")
 		}
 	},
 	ssr: {
 		noExternal: ["bits-ui"]
 	},
 	optimizeDeps: {
-		exclude: ['three']
+		include: ['three'],
+		force: true
 	},
 	build: {
 		rollupOptions: {
-			external: ['three']
+			external: []
 		}
 	}
 });
