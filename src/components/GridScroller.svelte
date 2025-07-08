@@ -4,6 +4,7 @@
 	// import ExternalLink from "lucide-svelte/icons/external-link";
 	// import DollarSign from "lucide-svelte/icons/dollar";
     import ExternalLink from "@lucide/svelte/icons/external-link";
+    import Grid from "$data/grid.csv";
 
 
     let { height, slide } = $props();
@@ -15,51 +16,66 @@
 	let scrollY = $state(0);
 	let dimensions = new useWindowDimensions();
 
+    let locations = $derived(Grid.reduce((acc, row) => {
+        const term = row.term;
+        if (!acc[term]) {
+            acc[term] = [];
+        }
+        acc[term].push({
+            link: row.link,
+            text: row.text
+        });
+        return acc;
+    }, {}));
+    console.log(locations,slide.images);
 
-    let locations = {
-        "fuhgeddaboudit": [
-            {
-                link: "https://maps.app.goo.gl/bYudE84yY6HNNbAy5",
-                text: "BQE, Verrazzano bridge"
-            },
-            {
-                link: "https://maps.app.goo.gl/fPHRL6mHCtoCftV56",
-                text: "Belt Parkway, Bay Ridge"
-            },
-            {
-                link: "https://maps.app.goo.gl/T1bsX9mAN8kWm9AX7",
-                text: "104-9 109th St, Queens"
-            },
-            {
-                link: "https://maps.app.goo.gl/UaEH9w7C2BDDvvQf8",
-                text: "Belt Parkway, East New York"
-            },
-            {
-                link: "https://maps.app.goo.gl/2ZPFZybdpGy3tY9W8",
-                text: "11-12 44th Dr, Queens"
-            },
-            {
-                link: "https://maps.app.goo.gl/xYZTVZk1ab8Mkhd26",
-                text: "531 Atlantic Ave, Brooklyn"
-            },
-            {
-                link: "https://maps.app.goo.gl/Ey7CNC7w4f21iEMw6",
-                text: "808 3rd Ave, Brooklyn"
-            }
-        ],
-        "loitering": [
-            {
-                link: "https://www.google.com/maps/@40.618176,-74.02476,3a,20y,270.04h,95.77t/data=!3m6!1e1!3m4!1sIMkbEoEa5gjovyj76pt06w!2e0!7i16384!8i8192?entry=ttu",
-                text: "BQE, Verrazzano bridge"
-            }
-        ],
-        "restrooms": [
-            {
-                link: "https://www.google.com/maps/@40.618176,-74.02476,3a,20y,270.04h,95.77t/data=!3m6!1e1!3m4!1sIMkbEoEa5gjovyj76pt06w!2e0!7i16384!8i8192?entry=ttu",
-                text: "BQE, Verrazzano bridge"
-            }
-        ]
-    }
+    console.log(locations[slide.images].length);
+
+
+    // let locations = {
+    //     "fuhgeddaboudit": [
+    //         {
+    //             link: "https://maps.app.goo.gl/bYudE84yY6HNNbAy5",
+    //             text: "BQE, Verrazzano bridge"
+    //         },
+    //         {
+    //             link: "https://maps.app.goo.gl/fPHRL6mHCtoCftV56",
+    //             text: "Belt Parkway, Bay Ridge"
+    //         },
+    //         {
+    //             link: "https://maps.app.goo.gl/T1bsX9mAN8kWm9AX7",
+    //             text: "104-9 109th St, Queens"
+    //         },
+    //         {
+    //             link: "https://maps.app.goo.gl/UaEH9w7C2BDDvvQf8",
+    //             text: "Belt Parkway, East New York"
+    //         },
+    //         {
+    //             link: "https://maps.app.goo.gl/2ZPFZybdpGy3tY9W8",
+    //             text: "11-12 44th Dr, Queens"
+    //         },
+    //         {
+    //             link: "https://maps.app.goo.gl/xYZTVZk1ab8Mkhd26",
+    //             text: "531 Atlantic Ave, Brooklyn"
+    //         },
+    //         {
+    //             link: "https://maps.app.goo.gl/Ey7CNC7w4f21iEMw6",
+    //             text: "808 3rd Ave, Brooklyn"
+    //         }
+    //     ],
+    //     "loitering": [
+    //         {
+    //             link: "https://www.google.com/maps/@40.618176,-74.02476,3a,20y,270.04h,95.77t/data=!3m6!1e1!3m4!1sIMkbEoEa5gjovyj76pt06w!2e0!7i16384!8i8192?entry=ttu",
+    //             text: "BQE, Verrazzano bridge"
+    //         }
+    //     ],
+    //     "restrooms": [
+    //         {
+    //             link: "https://www.google.com/maps/@40.618176,-74.02476,3a,20y,270.04h,95.77t/data=!3m6!1e1!3m4!1sIMkbEoEa5gjovyj76pt06w!2e0!7i16384!8i8192?entry=ttu",
+    //             text: "BQE, Verrazzano bridge"
+    //         }
+    //     ]
+    // }
 
     let slides = [1,2,3,4,5,6,7,8,9,10,11,12,13];
     function constrain(n, low, high) {
@@ -177,7 +193,7 @@
 
 <svelte:window bind:scrollY />
 
-{#if slide}
+{#if slide && locations}
     <div class="wrapper">
         <div class="container value-{valueSet} {value || value === 0 ? 'container-visible' : ''}">
             <div class="container-inner" style="height: {height}px;">
@@ -187,15 +203,19 @@
         <div class="text" style="">
             <Scrolly bind:value top={height/2} bottom={100} increments={10}>
                 <div class="example-grid">
-                    {#each locations[slide.images] as gridSlide, i}
-                        {@const count = i % locations[slide.images].length}
-                        <div class="example-grid-item item-{i}" bind:this={_triggerArt[i]}
-                            style="grid-column-start: {slideStyles[count].gridColumnStart}; justify-content: {slideStyles[count].justifyContent}; justify-self: {slideStyles[count].justifySelf};"
-                        >
-                            <a href="{locations[slide.images][i].link}" target="_blank"><img style="height: auto;" alt="" class="" src="assets/images/{slide.images}_{i}.jpg"></a>
-                            <span class="grid-item-text">{locations[slide.images][i].text}<a href="{locations[slide.images][i].link}" target="_blank"><ExternalLink color="white" /></a></span>
-                        </div>
-                    {/each}
+                    {#if Object.keys(locations).includes(slide.images)}
+                        {#each locations[slide.images] as gridSlide, i}
+                            {@const length = locations[slide.images].length}
+                            {@const minLength = length > slides.length ? slides.length : length}
+                            {@const count = i % minLength}
+                            <div class="example-grid-item item-{i}" bind:this={_triggerArt[i]}
+                                style="grid-column-start: {slideStyles[count].gridColumnStart}; justify-content: {slideStyles[count].justifyContent}; justify-self: {slideStyles[count].justifySelf};"
+                            >
+                                <a href="https://maps.app.goo.gl/{locations[slide.images][i].link}" target="_blank"><img style="height: auto;" alt="" class="" src="assets/images/{slide.images}_{i}.jpg"></a>
+                                <span class="grid-item-text">{locations[slide.images][i].text}<a href="https://maps.app.goo.gl/{locations[slide.images][i].link}" target="_blank"><ExternalLink color="white" /></a></span>
+                            </div>
+                        {/each}
+                    {/if}
                 </div>
             </Scrolly>
         </div>
@@ -230,7 +250,7 @@
         bottom: 0;
     }
     .container-visible {
-        opacity: .2;
+        opacity: .8;
     }
 
     .container-inner p {
@@ -290,7 +310,7 @@
         font-weight: 400;
         font-size: 10px;
         /* text-transform: uppercase; */
-        max-width: 140px;
+        /* max-width: 140px; */
         line-height: 1.2;
         width: calc(100% - 10px);
         text-align: center;

@@ -57,16 +57,16 @@
 
 	{#each copy.body || [] as { type, value: props, component }, idx (idx)}
 		{#if type === "intro"}
-			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={"first"} height={height}/> -->
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={"first"} height={height}/>
 		{:else if type === "intro2"}
-			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/> -->
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/>
 		{:else if type === "intro3"}
-			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/> -->
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height}/>
 		{:else if type === "imageGridVideo"}
 			<div class="text-section">
 				<!-- <img src="assets/images/song.png" style="margin-bottom:50px;"> -->
 				<!-- <button style="margin-bottom:50px;">Show me another set of images 🔀</button> -->
-				 <!-- <VideoPlayer /> -->
+				<VideoPlayer />
 			</div>
 		{:else if type === "gridScroller"}
 			<div class="grid-section">
@@ -76,17 +76,19 @@
 						 </p>
 					</div>
 
-					<GridScroller height={height} slide={slide} />
+					{#if slide.images == "acab" || slide.images == "fuhgeddaboudit"}
+						<GridScroller height={height} slide={slide} />
+					{/if}
 				{/each}
 			</div>			
 		{:else if type === "head"}
-			<!-- <div class="head" style="">
+			<div class="head" style="">
 				<h1>{copy.meta.title}</h1>
 				<h3>{copy.meta.description}</h3>
 				<p>{copy.meta.byline}</p>
-			</div> -->
+			</div>
 		{:else if type === "maps"}
-			<!-- <h4 class="map-section-title">{props.mapsTitle}</h4>
+			<h4 class="map-section-title">{props.mapsTitle}</h4>
 
 			<div class="map-section">
 				{#each props.slides as slide, i}
@@ -99,7 +101,7 @@
 						<img src="assets/images/{slide.img}" style="margin-bottom:50px;">
 					</div>
 				{/each}
-			</div> -->
+			</div>
 
 		{:else if type === "section"}
 			<!-- <div class="text-section {props.className}">
@@ -115,7 +117,7 @@
 				{/each}
 			</div> -->
 		{:else if type === "ranking"}
-			<!-- <Ranking {height} {props} /> -->
+			<Ranking {height} {props} />
 		{/if}
 	{/each}
 

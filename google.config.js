@@ -12,5 +12,10 @@ export default [
 		"id": "1SVS5Eqw2OvDwRxiyIKLFhF33i7ecYYIRxz0Ybbl69X4",
 		"gid": "532340784",
 		"filepath": "src/data/rank.csv"
+	},
+	{
+		"id": "1SVS5Eqw2OvDwRxiyIKLFhF33i7ecYYIRxz0Ybbl69X4",
+		"gid": "2025333406",
+		"filepath": "src/data/grid.csv"
 	}
 ]
