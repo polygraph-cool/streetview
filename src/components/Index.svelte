@@ -72,7 +72,7 @@
 			<div class="grid-section">
 				{#each props.slides as slide, i}
 					<div class="text-section">
-						 <p>The result is a search engine of much of what’s written in NYC’s streets, but limited to text that a Google Streetview car can capture; we’re, of course, missing text from places such as alleyways and parks, or anything too small to be viewable by the camera.
+						 <p>{slide.text}
 						 </p>
 					</div>
 
@@ -104,7 +104,7 @@
 			</div>
 
 		{:else if type === "section"}
-			<!-- <div class="text-section {props.className}">
+			<div class="text-section {props.className}">
 				{#each props.section || [] as { type, value: props, component }, idx (idx)}
 
 					{#if type === "text"}
@@ -115,7 +115,7 @@
 						<img src={props.media} style="margin-bottom:50px;">
 					{/if}
 				{/each}
-			</div> -->
+			</div>
 		{:else if type === "ranking"}
 			<Ranking {height} {props} />
 		{/if}
@@ -133,9 +133,9 @@
 
 <style>
 	.map-section-title {
-		font-size: 18px;
+		font-size: 24px;
 		margin-top: 60px;
-		font-weight: 400;
+		font-weight: 600;
 		text-align: left;
 		max-width: 600px;
 		margin: 0 auto;
@@ -143,7 +143,8 @@
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		margin-bottom: 30px;
-		opacity: .6;
+		opacity: 1;
+		color: #ffc868;
 	}
 	.map-section {
 		display: grid;
@@ -156,7 +157,7 @@
 		-moz-osx-font-smoothing: grayscale;
 	}
 	.map-slide-text-wrapper {
-		height: 120px;
+		/* height: 120px; */
 	}
 	.map-slide {
 		/* display: flex; */
@@ -176,7 +177,7 @@
 	.map-slide-title {
 		font-size: 24px;
 		font-weight: 400;
-		margin-bottom: 0px;
+		margin-bottom: 10px;
 		margin-top: 0px;
 	}
 	.map-slide-text {

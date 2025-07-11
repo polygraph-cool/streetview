@@ -27,9 +27,6 @@
         });
         return acc;
     }, {}));
-    console.log(locations,slide.images);
-
-    console.log(locations[slide.images].length);
 
 
     // let locations = {

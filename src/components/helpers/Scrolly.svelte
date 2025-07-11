@@ -26,19 +26,41 @@
 	let nodes = [];
 	let intersectionObservers = [];
 	let container = undefined;
+	let debounceTimer = undefined;
 
 	function mostInView () {
+		let prevValue = value;
 		let maxRatio = 0;
 		let maxIndex = 0;
+		
+		// Additional safety check: verify elements are actually in viewport
 		for (let i = 0; i < steps.length; i++) {
 			if (steps[i] > maxRatio) {
-				maxRatio = steps[i];
-				maxIndex = i;
+				// Double-check the element is actually visible
+				const element = nodes[i];
+				if (element) {
+					const rect = element.getBoundingClientRect();
+					const isInViewport = rect.top < window.innerHeight && 
+										rect.bottom > 0 && 
+										rect.left < window.innerWidth && 
+										rect.right > 0;
+					
+					if (isInViewport) {
+						maxRatio = steps[i];
+						maxIndex = i;
+					} else {
+						// Force reset if element is not actually in viewport
+						steps[i] = 0;
+						// console.warn(`Node ${i} had ratio ${steps[i]} but is not in viewport!`);
+					}
+				}
 			}
 		}
 
+		// console.log('Final steps:', steps, 'maxIndex:', maxIndex, 'maxRatio:', maxRatio);
+		
 		if (maxRatio > 0) value = maxIndex;
-		else value = undefined;
+		else value = prevValue; //undefined
 	};
 
 	function createObserver(node, index) {
@@ -46,7 +68,23 @@
 		const handleIntersect = (e) => {
 			const intersecting = e[0].isIntersecting;
 			const ratio = e[0].intersectionRatio;
-			steps[index] = ratio;
+			const rect = e[0].boundingClientRect;
+			
+			// Only update if the element is actually intersecting
+			if (intersecting) {
+				steps[index] = ratio;
+			} else {
+				steps[index] = 0; // Force to 0 when not intersecting
+			}
+			
+			// Debug: log all intersection events
+			// console.log(`Node ${index}:`, {
+			// 	intersecting,
+			// 	ratio,
+			// 	boundingRect: rect,
+			// 	steps: [...steps]
+			// });
+			
 			mostInView();
 		};
 
@@ -63,11 +101,20 @@
 	}
 
 	function update() {
+		// Disconnect all existing observers first
+		intersectionObservers.forEach(observer => {
+			if (observer) observer.disconnect();
+		});
+		intersectionObservers = [];
+		
 		if (!nodes.length) return;
 		nodes.forEach(createObserver);
 	}
 
 	$effect(() => {
+		// Reset arrays to prevent accumulation
+		threshold = [];
+		steps = [];
 		for (let i = 0; i < increments + 1; i++) {
 			threshold.push(i / increments);
 		}
@@ -79,6 +126,18 @@
 		top;
 		bottom;
 		update();
+	});
+
+	// Cleanup on unmount
+	$effect(() => {
+		return () => {
+			intersectionObservers.forEach(observer => {
+				if (observer) observer.disconnect();
+			});
+			intersectionObservers = [];
+			steps = [];
+			threshold = [];
+		};
 	});
 
 </script>

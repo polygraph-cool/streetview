@@ -22,6 +22,7 @@
 	--font-form: var(--sans);
 	--color-bg: #111;
 	--color-fg: #fff;
+	--rank-highlight: #74FCD0;
 	--color-primary: var(--color-black);
 	--color-link: var(--color-black);
 	--color-link-hover: var(--color-black);
@@ -222,11 +223,11 @@ a {
 	background-color: #3F3F3F;
 	color: #fff;
 	font-size: 12px;
-	font-weight: 400;
+	font-weight: 00;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	padding: 2px 8px;
-	border-radius: 10px;
+	padding: 2px 5px;
+	border-radius: 5px;
 	text-decoration: none;
 	text-decoration-color: #fff;
 	text-decoration-thickness: 1px;
@@ -236,5 +237,12 @@ a {
 	text-decoration-thickness: 1px;
 	text-underline-offset: 1px;
 	white-space: nowrap;
+}
 
+.red {
+	color: #ff7373;
+}
+
+.rankHighlight {
+	color: var(--rank-highlight);
 }
