@@ -52,7 +52,7 @@
     // let resolutionPlugin;
     let scaleYaw = scaleLinear().domain([0, 1]).range([0,Math.PI * 2]);
     let scalePitch = scaleLinear().domain([0, 1]).range([Math.PI / 2, -Math.PI / 2]);
-
+    let debounceTimer = null;
     let markers = [];
 
     function parseMarkers() {
@@ -146,34 +146,31 @@
             return markerSet;
         }).flat();
 
-        console.log(markers)
+        // console.log(markers)
 
         // console.log('Parsed markers:', markers);
     }
 
-
-    // Track viewer position and zoom changes
     $effect(() => {
-        // Explicitly track coords as a dependency
-
-
-
         const currentCoords = coords;
         if (
             viewer && currentCoords &&
-            currentCoords[0] !== prevCoords[0] &&
-            currentCoords[1] !== prevCoords[1]
+            (currentCoords[0] !== prevCoords[0] || currentCoords[1] !== prevCoords[1] || zoom !== prevZoom)
         ) {
-            
-
-        // console.log(type, currentCoords, zoom);
-            viewer.rotate({
-                yaw: currentCoords[0],
-                pitch: currentCoords[1],
-            });
-            viewer.zoom(zoom);
             prevCoords = currentCoords;
             prevZoom = zoom;
+            if (debounceTimer) {
+                clearTimeout(debounceTimer);
+            }
+            // Batch the operations to reduce reflows
+            debounceTimer = setTimeout(() => {
+                console.log("new coorrds")
+                viewer.rotate({
+                    yaw: currentCoords[0],
+                    pitch: currentCoords[1],
+                });
+                viewer.zoom(zoom);
+            }, 10);
         }
     });
 
@@ -194,8 +191,8 @@
                     panorama: panoramaUrl,
                     navbar: false,
                     loadingImg: null,
-                    defaultPitch: 6.18,
-                    defaultYaw: -.002,
+                    defaultYaw: coords[0],
+                    defaultPitch: coords[1],
                     plugins: [
                         [MarkersPlugin, {
                             markers: markers,
@@ -204,23 +201,20 @@
                 });
 
                 viewer.addEventListener('panorama-loaded', (event) => {
-                    // console.log('Panorama image loaded', event);
-                    opacity = 1;
-                    isViewerReady = true; // <<< Set viewer ready flag
+
+                    if(type === "intro"){
+                        console.log('Panorama image loaded', event);
+                    }
                     // console.log('isViewerReady set to true. Initial position:', viewer.getPosition());
                 });
 
                 viewer.addEventListener('ready', () => {
+                    if(type === "intro"){
+                        console.log("ready",coords)
+                    }
+                    opacity = 1;
+                    isViewerReady = true; // <<< Set viewer ready flag
 
-                    viewer.rotate({
-                        yaw: coords[0],
-                        pitch: coords[1],
-                    });
-
-                    viewer.addEventListener('position-updated', ({ position }) => {
-                        // console.log(viewer.getZoomLevel())
-                        // console.log(`new position is yaw: ${position.yaw} pitch: ${position.pitch}`);
-                    });
                 });
 
             } catch (error) {

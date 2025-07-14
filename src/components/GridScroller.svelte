@@ -151,7 +151,6 @@
     ];
 
     $effect(() => {
-        console.log(value, valueSet)
         if(value === undefined || value === null){
             if(valueSet === null || valueSet === undefined){
                 valueSet = undefined;

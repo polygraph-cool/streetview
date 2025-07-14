@@ -15,7 +15,7 @@
 	function toggleMute() {
 		isMuted = !isMuted;
 		videoEl.muted = false; // Always control via volume
-		fadeVolume(isMuted ? 0 : 0.5);
+		fadeVolume(isMuted ? 0 : 0.2);
 	}
 
 	function fadeVolume(target) {
