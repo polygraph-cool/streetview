@@ -1,15 +1,14 @@
 <script>
-    import { onMount, getContext } from 'svelte';
+    import { onMount } from 'svelte';
     import { browser } from '$app/environment';
-    import data from "$data/annotations.csv";
     import { scaleLinear } from "d3-scale";
 
-    let { panoramaUrl, coords, zoom, value, markersRaw, type } = $props();
+    let { defaultCoords, panoramaUrl, coords, zoom, value, markersRaw, type, height, isPanoramaLoaded = $bindable(false) } = $props();
     let viewerContainer;
     let viewer;
     let opacity = $state(0);
     let isViewerReady = $state(false);
-
+    let isAnimating = $state(false);
     let prevCoords = $state([0, 0]);
     let prevZoom = $state(0);
 
@@ -159,16 +158,32 @@
         ) {
             prevCoords = currentCoords;
             prevZoom = zoom;
+
             if (debounceTimer) {
                 clearTimeout(debounceTimer);
             }
             // Batch the operations to reduce reflows
             debounceTimer = setTimeout(() => {
-                console.log("new coorrds")
+                // console.log("new coorrds")
+                
+
+                // if(!isAnimating){
+                //     isAnimating = true;
+
+                //     viewer.animate({
+                //         yaw: currentCoords[0],
+                //         pitch: currentCoords[1],
+                //         zoom: zoom,
+                //         speed: 0,
+                //     })  
+                //     .then(() => {
+                //             isAnimating = false;
+                //         });
+                // }
                 viewer.rotate({
                     yaw: currentCoords[0],
                     pitch: currentCoords[1],
-                });
+                })  
                 viewer.zoom(zoom);
             }, 10);
         }
@@ -191,8 +206,8 @@
                     panorama: panoramaUrl,
                     navbar: false,
                     loadingImg: null,
-                    defaultYaw: coords[0],
-                    defaultPitch: coords[1],
+                    defaultYaw: defaultCoords[0],
+                    defaultPitch: defaultCoords[1],
                     plugins: [
                         [MarkersPlugin, {
                             markers: markers,
@@ -201,6 +216,7 @@
                 });
 
                 viewer.addEventListener('panorama-loaded', (event) => {
+                    isPanoramaLoaded = true; // <-- Notify the parent by updating the bound prop
 
                     if(type === "intro"){
                         console.log('Panorama image loaded', event);
@@ -231,12 +247,12 @@
 
 </script>
 
-<div bind:this={viewerContainer} id="viewer" style="opacity: {opacity}; transition: opacity 0.5s ease-in-out;"></div>
+<div bind:this={viewerContainer} id="viewer" style="height: {height}px; opacity: {opacity}; transition: opacity 0.5s ease-in-out;"></div>
 
 <style>
 
     #viewer {
         width: 100%;
-        height: 100vh;
+        height: var(--height);
     }
 </style>

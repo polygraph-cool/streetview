@@ -7,13 +7,12 @@
     import Grid from "$data/grid.csv";
 
 
-    let { height, slide } = $props();
+    let { height, slide, scrollY } = $props();
 
 	let value = $state();
     let valueSet = $state(null);
 
     let _triggerArt = $state([]);
-	let scrollY = $state(0);
 	let dimensions = new useWindowDimensions();
 
     let locations = $derived(Grid.reduce((acc, row) => {
@@ -29,55 +28,7 @@
     }, {}));
 
 
-    // let locations = {
-    //     "fuhgeddaboudit": [
-    //         {
-    //             link: "https://maps.app.goo.gl/bYudE84yY6HNNbAy5",
-    //             text: "BQE, Verrazzano bridge"
-    //         },
-    //         {
-    //             link: "https://maps.app.goo.gl/fPHRL6mHCtoCftV56",
-    //             text: "Belt Parkway, Bay Ridge"
-    //         },
-    //         {
-    //             link: "https://maps.app.goo.gl/T1bsX9mAN8kWm9AX7",
-    //             text: "104-9 109th St, Queens"
-    //         },
-    //         {
-    //             link: "https://maps.app.goo.gl/UaEH9w7C2BDDvvQf8",
-    //             text: "Belt Parkway, East New York"
-    //         },
-    //         {
-    //             link: "https://maps.app.goo.gl/2ZPFZybdpGy3tY9W8",
-    //             text: "11-12 44th Dr, Queens"
-    //         },
-    //         {
-    //             link: "https://maps.app.goo.gl/xYZTVZk1ab8Mkhd26",
-    //             text: "531 Atlantic Ave, Brooklyn"
-    //         },
-    //         {
-    //             link: "https://maps.app.goo.gl/Ey7CNC7w4f21iEMw6",
-    //             text: "808 3rd Ave, Brooklyn"
-    //         }
-    //     ],
-    //     "loitering": [
-    //         {
-    //             link: "https://www.google.com/maps/@40.618176,-74.02476,3a,20y,270.04h,95.77t/data=!3m6!1e1!3m4!1sIMkbEoEa5gjovyj76pt06w!2e0!7i16384!8i8192?entry=ttu",
-    //             text: "BQE, Verrazzano bridge"
-    //         }
-    //     ],
-    //     "restrooms": [
-    //         {
-    //             link: "https://www.google.com/maps/@40.618176,-74.02476,3a,20y,270.04h,95.77t/data=!3m6!1e1!3m4!1sIMkbEoEa5gjovyj76pt06w!2e0!7i16384!8i8192?entry=ttu",
-    //             text: "BQE, Verrazzano bridge"
-    //         }
-    //     ]
-    // }
-
     let slides = [1,2,3,4,5,6,7,8,9,10,11,12,13];
-    function constrain(n, low, high) {
-		return Math.max(Math.min(n, high), low);
-	}
 
     let slideStyles = [
         {
@@ -187,16 +138,14 @@
 
 </script>
 
-<svelte:window bind:scrollY />
-
 {#if slide && locations}
-    <div class="wrapper">
+    <div class="wrapper" style="margin-bottom: {slide.title === 'Fuhgeddaboudit' ? '200px' : ''}">
         <div class="container value-{valueSet} {value || value === 0 ? 'container-visible' : ''}">
             <div class="container-inner" style="height: {height}px;">
                 <p>{slide.title}</p>
             </div>
         </div>
-        <div class="text" style="">
+        <div class="text" style="margin-top: {slide.title === 'Fuhgeddaboudit' ? '200px' : ''}">
             <Scrolly bind:value top={height/2} bottom={100} increments={10}>
                 <div class="example-grid">
                     {#if Object.keys(locations).includes(slide.images)}
@@ -211,6 +160,7 @@
                                 <span class="grid-item-text">{locations[slide.images][i].text}<a href="https://maps.app.goo.gl/{locations[slide.images][i].link}" target="_blank"><ExternalLink color="white" /></a></span>
                             </div>
                         {/each}
+                        <a href="https://www.alltext.nyc/map?q={slide.images}"><button class="view-map">View the Map of &ldquo;{slide.title}&rdquo; <span><ExternalLink color="white" /></span></button></a>
                     {/if}
                 </div>
             </Scrolly>
@@ -221,6 +171,31 @@
 
 
 <style>
+    .view-map {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        transform: translate(0, 100px);
+        width: fit-content;
+        margin: 0 auto;
+        background: #3F3F3F;
+        color: white;   
+        border-radius: 8px;
+        padding-left: 8px;
+        padding-right: 8px;
+        font-size: 16px;
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    .view-map span {
+        font-size: 14px;
+        margin-left: 2px;
+        width: 15px;
+        display: inline-block;
+    }
     .text {
         margin-top: 150px;
     }
@@ -274,6 +249,7 @@
 		position: relative;
 		display: grid;
         max-width: 900px;
+        width: calc(100vw - 50px);
 		gap: 20px 20px;
 		grid-template-columns: auto auto auto;
         grid-auto-rows: 45vh;
@@ -301,7 +277,7 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         margin-top: 5px;
-        color: rgba(255, 255, 255, 0.4);
+        color: rgba(255, 255, 255, 0.6);
         text-decoration-color: currentColor;
         font-weight: 400;
         font-size: 10px;
@@ -325,6 +301,27 @@
 		align-items: center;
 		margin-left: 3px;
 		padding: 2px;
+    }
+	@media only screen and (max-width: 600px) {
+        .example-grid {
+            grid-auto-rows: 50vh;
+            grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+            gap: 10px 10px;
+            width: calc(100% - 50px);
+        }
+
+        .container-inner p {
+            font-size: 64px;
+            letter-spacing: -5px;
+            width: calc(100% - 20px);
+            margin: 0 auto;
+            text-align: center;
+        }
+        .example-grid-item img {
+            width: 100%;
+        }
+
+
     }
 
 

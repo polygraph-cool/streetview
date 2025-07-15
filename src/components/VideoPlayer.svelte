@@ -1,27 +1,45 @@
 <script>
     import { onMount } from "svelte";
-	let videoEl;
 	let isMuted = $state(true);
 	let fadeInterval;
 	let videoDuration = $state(0);
 	let currentTime = $state(0);
 	const FADE_DURATION = 300; // ms
 	const FADE_STEPS = 20;
+	const UNMUTED_VOLUME = 0.2;
+    
+    let { scrollY, height } = $props();
+    let videoEl = $state(null);
 
+	onMount(() => {
+		if (videoEl) {
+			videoEl.volume = 0;
+		}
+	});
 
+    $effect(() => {
+        if (scrollY && videoEl) {
+            const elementTop = videoEl.getBoundingClientRect().top + height;
+            if(elementTop < 0){
+                isMuted = true;
+                videoEl.muted = true;
+                fadeVolume(0);
+            }
+        }
+    })
 	// Use $derived rune for reactive progress calculation
 	let progress = $derived(videoDuration > 0 ? currentTime / videoDuration : 0);
 
 	function toggleMute() {
 		isMuted = !isMuted;
 		videoEl.muted = false; // Always control via volume
-		fadeVolume(isMuted ? 0 : 0.2);
+		fadeVolume(isMuted ? 0 : UNMUTED_VOLUME);
 	}
 
 	function fadeVolume(target) {
 		if (!videoEl) return;
 		if (fadeInterval) clearInterval(fadeInterval);
-		const start = videoEl.volume;
+		const start = videoEl.volume !== 0 ? .2 : 0;
 		const end = target;
 		const step = (end - start) / FADE_STEPS;
 		let currentStep = 0;
@@ -134,5 +152,11 @@
         display: block;
         width: 100%;
         border-radius: 10px;
+    }
+
+    @media only screen and (max-width: 500px) {
+        .video-container {
+            max-width: calc(100% - 50px);
+        }
     }
 </style>

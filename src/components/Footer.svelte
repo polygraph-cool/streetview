@@ -10,7 +10,7 @@
 	let stories = $state([]);
 	let storyCount = $state(0);
 
-	let { recirc = false, recent = true, recircImages = false } = $props();
+	let { recirc = true, recent = true, recircImages = false } = $props();
 
 	const v = Date.now();
 	const url = `https://pudding.cool/assets/data/stories.json?v=${v}`;
@@ -41,7 +41,7 @@
 			const data = await response.json();
 
 			const filtered = data.filter((d) => !localURL.includes(d.url));
-
+      console.log(filtered);
 			const withSlug = filtered.map((d) => ({
 				...d,
 				tease: d.hed,
@@ -77,7 +77,11 @@
 						We’ve published <strong>{storyCount}</strong> awesome stories such
 						as
 						{#each stories as { short, url }, i}
-							<a href="{base}/{url}" target="_blank" rel="noreferrer">{short}</a>,&nbsp;
+              {#if url.slice(0,4) == "http"}
+                <a href="{url}" target="_blank" rel="noreferrer">{short}</a>,&nbsp;
+              {:else}
+							  <a href="{base}/{url}" target="_blank" rel="noreferrer">{short}</a>,&nbsp;
+              {/if}
 						{/each}and more.
 					</section>
 				{/if}

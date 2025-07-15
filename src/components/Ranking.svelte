@@ -5,6 +5,11 @@
     import rankData from "$data/rank.csv";
     import Grid from "$data/grid.csv";
 
+    let { height, props, width } = $props();
+    let value = $state(undefined);    
+
+    let lineHeight = $derived(width > 650 ? 24 : 16);
+
     let locations = $derived(Grid.reduce((acc, row) => {
         const term = row.term;
         if (!acc[term]) {
@@ -23,17 +28,11 @@
         return (s[(v-20)%10] || s[v] || s[0]);
     }
 
-    let { height, props } = $props();
-    let value = $state(undefined);    
-
-    let _triggerArt = $state([]);
-	let percentScrolledValues = $state([]);
-
     let rankToShow = $derived.by(() => {
         if (value === null || value === undefined) {
             return null;
         } else {
-            if(zoomIndex[value] == 2){
+            if(zoomIndex[value] > 1){
                 return triggerIndex[value];
             }
             return null;
@@ -41,9 +40,6 @@
         
     });
 
-    $inspect(rankToShow);
-    $inspect(value);
-    
     let triggerIndex = $derived.by(() => {
         return props.slides.map((slide,i) => {
             return slide.trigger;
@@ -52,6 +48,14 @@
 
     let zoomIndex = $derived.by(() => {
         return props.slides.map((slide,i) => {
+            if(width < 650){
+                if(slide.zoom > 1){ 
+                    return 1.1;
+                }
+                else {
+                    slide.zoom;
+                }
+            }
             return slide.zoom;
         })
     })
@@ -73,7 +77,7 @@
         }
     
         let index = streetsOnlyTerms.findIndex(r => r === rankToShow);
-        return (-1 * (((index - 1) * 24 * scaleValue) - (height * 0.5) + (24 * scaleValue) + offset));
+        return (-1 * (((index - 1) * lineHeight * scaleValue) - (height * 0.5) + (lineHeight * scaleValue) + offset));
 	});
 
     let offset = $state(100);
@@ -239,7 +243,7 @@
                 class:highlight
                 class:street={+masterRanking[i].street === 1}
                 animate:flip={{ duration: 600, delay: 0 }}
-                style="transform: translate3d(0px, {i * 24}px, 0px);"
+                style="transform: translate3d(0px, {i * lineHeight}px, 0px);"
                 >
                     {rank}
                     <span>{i + 1}<sup style="font-size: 8px;">{getOrdinal(i + 1)}</sup></span>
@@ -261,7 +265,18 @@
                     class="step-{i} step {["start","color","hold"].indexOf(slide.trigger) > -1 ? 'text-only-step' : ''}"
                 >
                     {#if ["start","color","hold"].indexOf(slide.trigger) === -1}
-                        <p class="exposition exposition-grid">{@html slide.text}</p>
+
+                        <div class="text-wrapper">
+                            <p class="text-fg exposition exposition-grid" style="opacity: 1">
+                                <span class="text-inner">{@html slide.text}</span>
+                            </p>
+                            <p aria-hidden="true" class="text-bg exposition exposition-grid" style="opacity: 1">
+                                <span class="text-inner">{@html slide.text}</span>
+                            </p>
+                        </div>
+
+
+                        <!-- <p class="exposition exposition-grid"></p> -->
                         <div class="example-grid">
                             {#each locations[termTemp] as gridSlide, i}
                                 {@const count = i % locations[termTemp].length}
@@ -274,11 +289,30 @@
                             {/each}
                         </div>
                         {#if Object.keys(slide).indexOf("post") > -1}
-                            <p class="exposition post" style="--height: {height}px;">{@html slide.post}</p>
+                            <div class="text-wrapper" style="--height: {height}px;">
+                                <p class="text-fg exposition post" style="opacity: 1">
+                                    <span class="text-inner">{@html slide.post}</span>
+                                </p>
+                                <p aria-hidden="true" class="text-bg exposition post" style="opacity: 1">
+                                    <span class="text-inner">{@html slide.post}</span>
+                                </p>
+                            </div>
+
+                            <!-- <p class="exposition post" >{@html slide.post}</p> -->
                         {/if}
                     {:else}
                         <div class="slide-text-only-wrapper" style="">
-                            <p class="exposition">{@html slide.text}</p>
+
+                            <div class="text-wrapper">
+                                <p class="text-fg exposition" style="opacity: 1">
+                                    <span class="text-inner">{@html slide.text}</span>
+                                </p>
+                                <p aria-hidden="true" class="text-bg exposition" style="opacity: 1">
+                                    <span class="text-inner">{@html slide.text}</span>
+                                </p>
+                            </div>
+
+                            <!-- <p class="exposition"></p> -->
                         </div>
                     {/if}
                 </div>
@@ -387,7 +421,7 @@
     }
 
     .container p span:before {
-        content: "— ";
+        content: "- ";
         padding-left: 5px;
         padding-right: 0px;
     }
@@ -499,4 +533,122 @@
     .isFirst, .text-only-step {
         margin-bottom: calc(var(--height) / 2);
     }
+
+    .text-wrapper {
+        position: relative;
+    }
+
+    p.text-bg, p.text-fg {
+		letter-spacing: 0px;
+		-ms-text-size-adjust: 100%;
+		-moz-text-size-adjust: 100%;
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+        color: var(--color-fg);
+	}
+
+	.text-fg {
+		z-index: 1;
+		position: relative;
+		-webkit-font-smoothing: antialiased;
+		pointer-events: all;
+	}
+
+	.text-fg .text-inner, .text-bg .text-inner {
+		padding: 14px 0 11px;
+		box-shadow: 15px 0 #fff0, -15px 0 #fff0;
+		-webkit-box-decoration-break: clone;
+		box-decoration-break: clone;
+		background-color: #fff0;
+		vertical-align: baseline;
+	}
+
+	.text-bg {
+		position: absolute;
+		top: 0;
+		-webkit-font-smoothing: antialiased;
+		left: 0;
+		opacity: .95;
+		width: 100%;
+	}
+
+	.text-fg span {
+		letter-spacing: 0px;
+		-ms-text-size-adjust: 100%;
+		-moz-text-size-adjust: 100%;
+		-webkit-text-size-adjust: 100%;
+		text-size-adjust: 100%;
+		-webkit-font-smoothing: antialiased;
+		vertical-align: baseline;
+		transform: translate(0);
+		margin-block-start: 1em;
+		margin-block-end: 1em;
+		margin-inline-start: 0px;
+		margin-inline-end: 0px;
+		font-variant-ligatures: normal;
+	}
+
+	.text-bg .text-inner {
+		color: rgba(0,0,0,0);
+		background-color: #111;
+		box-shadow: 15px 0 #111, -15px 0 #111;
+	}
+
+
+    @media only screen and (max-width: 650px) {
+        .container {
+            max-width: 100%;
+        }
+
+        .container p {
+            font-size: 13px;
+            letter-spacing: -.2px;
+            padding-right: 3px;
+            text-shadow: -3px -3px 1px rgba(17, 17, 17, 0.3), -3px -2px 1px rgba(17, 17, 17, 0.3), -3px -1px 1px rgba(17, 17, 17, 0.3), -3px 0px 1px rgba(17, 17, 17, 0.3), -3px 1px 1px rgba(17, 17, 17, 0.3), -3px 2px 1px rgba(17, 17, 17, 0.3), -3px 3px 1px rgba(17, 17, 17, 0.3), -2px -3px 1px rgba(17, 17, 17, 0.3), -2px -2px 1px rgba(17, 17, 17, 0.3), -2px -1px 1px rgba(17, 17, 17, 0.3), -2px 0px 1px rgba(17, 17, 17, 0.3), -2px 1px 1px rgba(17, 17, 17, 0.3), -2px 2px 1px rgba(17, 17, 17, 0.3), -2px 3px 1px rgba(17, 17, 17, 0.3), -1px -3px 1px rgba(17, 17, 17, 0.3), -1px -2px 1px rgba(17, 17, 17, 0.3), -1px -1px 1px rgba(17, 17, 17, 0.3), -1px 0px 1px rgba(17, 17, 17, 0.3), -1px 1px 1px rgba(17, 17, 17, 0.3), -1px 2px 1px rgba(17, 17, 17, 0.3), -1px 3px 1px rgba(17, 17, 17, 0.3), 0px -3px 1px rgba(17, 17, 17, 0.3), 0px -2px 1px rgba(17, 17, 17, 0.3), 0px -1px 1px rgba(17, 17, 17, 0.3), 0px 1px 1px rgba(17, 17, 17, 0.3), 0px 2px 1px rgba(17, 17, 17, 0.3), 0px 3px 1px rgba(17, 17, 17, 0.3), 1px -3px 1px rgba(17, 17, 17, 0.3), 1px -2px 1px rgba(17, 17, 17, 0.3), 1px -1px 1px rgba(17, 17, 17, 0.3), 1px 0px 1px rgba(17, 17, 17, 0.3), 1px 1px 1px rgba(17, 17, 17, 0.3), 1px 2px 1px rgba(17, 17, 17, 0.3), 1px 3px 1px rgba(17, 17, 17, 0.3), 2px -3px 1px rgba(17, 17, 17, 0.3), 2px -2px 1px rgba(17, 17, 17, 0.3), 2px -1px 1px rgba(17, 17, 17, 0.3), 2px 0px 1px rgba(17, 17, 17, 0.3), 2px 1px 1px rgba(17, 17, 17, 0.3), 2px 2px 1px rgba(17, 17, 17, 0.3), 2px 3px 1px rgba(17, 17, 17, 0.3), 3px -3px 1px rgba(17, 17, 17, 0.3), 3px -2px 1px rgba(17, 17, 17, 0.3), 3px -1px 1px rgba(17, 17, 17, 0.3), 3px 0px 1px rgba(17, 17, 17, 0.3), 3px 1px 1px rgba(17, 17, 17, 0.3), 3px 2px 1px rgba(17, 17, 17, 0.3), 3px 3px 1px rgba(17, 17, 17, 0.3);
+        }
+
+        .container p span {
+            text-shadow: none;
+        }
+        .exposition {
+            font-size: 16px;
+            margin-left: 10px;
+            max-width: 150px;
+        }
+
+        .text:before {
+            width: 100px;
+        }
+
+        .container p span:before {
+            content: "-";
+            padding-left: 2px;
+            padding-right: 0px;
+        }
+        .container p span {
+            font-size: 10px;
+        }
+
+        .example-grid {
+            grid-auto-rows: 40vh;
+            grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+            gap: 10px 10px;
+            width: calc(100% - 100px);
+            margin-left: 0;
+        }
+        .example-grid-item img {
+            width: 100%;
+        }
+
+        .text-bg .text-inner {
+		    color: rgba(255,255,255,0);
+		    background-color: #222;
+		    box-shadow: 15px 0 #222, -15px 0 #222;
+		}
+
+        p.text-bg, p.text-fg {
+            font-size: 16px;
+        }
+    }
+
 </style>

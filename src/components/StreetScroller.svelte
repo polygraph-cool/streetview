@@ -5,14 +5,22 @@
 	import { easeCubicInOut } from 'd3-ease';
     import { onMount } from "svelte";
 	import Scrolly from "$components/helpers/Scrolly.svelte";
+	import { isPageLoading } from "$utils/appState.svelte.js";
 
-	let { props, markers, count, height, type } = $props();
+	let { props, markers, count, height, type, scrollY } = $props();
 	let dimensions = new useWindowDimensions();
 
     let waypoints = {};
     let waysSet = $state(false);
     let zoom = $state(50);
     let zoomLevels = {};
+    let panoramaHasLoaded = $state(false);
+
+	$effect(() => {
+		if(count === 'first' && panoramaHasLoaded){
+			isPageLoading.set(false);
+		}
+	});
 
     onMount(() => {
         props.slides.forEach((slide, i) => {
@@ -24,7 +32,6 @@
 
 	
 	let _triggerArt = $state([]);
-	let scrollY = $state(0);
 	let value = $state();
     let valueSet = $state(null);
 	let percentScrolledValues = $state([]);
@@ -132,8 +139,6 @@
 
 </script>
 
-<svelte:window bind:scrollY />
-
 <svelte:boundary onerror={(e) => console.error(e)}>
 	{#if waysSet}
         <div class="wrapper" id={type}>
@@ -147,6 +152,9 @@
 						<p aria-hidden="true" class="text-bg" style="opacity: 1">
 							<span class="text-inner">{props.slides[0].text}</span>
 						</p>
+						{#if !panoramaHasLoaded}
+							<p class="loading"><span>Loading...Pls Wait!</span></p>
+						{/if}
 					</div>
 
 					<div class="screen" style="opacity:{percentScrolledValues[0] ? (1-percentScrolledValues[0]) : 1};">
@@ -165,6 +173,9 @@
                         value={valueSet}
                         markersRaw={markers}
                         type={type}
+						height={height}
+						defaultCoords={props.default_coords.split(",").map(d => +d)}
+                        bind:isPanoramaLoaded={panoramaHasLoaded}
                     />
                 {/if}
             </div>
@@ -200,7 +211,6 @@
 </svelte:boundary>
 
 <style>
-
     .container {
 		position: sticky;
 		top: 0;
@@ -373,6 +383,45 @@
 	.opener p {
 		top: 50%;
 		transform: translate(0,-50%);
+	}
+
+	.opener p.loading {
+		font-size:24px;
+		position: absolute;
+		bottom: 100px;
+		left: 0;
+		right: 0;
+		font-family: var(--sans);
+		top: auto;
+		text-align: center;
+		color: #000;
+		z-index: 10000000000;
+	}
+
+	.opener p.loading span {
+		background: rgb(116, 252, 208);
+	}
+
+	@media only screen and (max-width: 700px) {
+		.text-wrapper {
+			max-width: calc(100% - 200px);
+			margin: 0 auto;
+		}
+	}
+
+	@media only screen and (max-width: 500px) {
+		.opener {
+			max-width: calc(100% - 100px);
+		}
+		.opener .text-fg, .opener .text-bg {
+			font-size: 32px;
+		}
+
+		.text-wrapper {
+			max-width: calc(100% - 100px);
+			margin: 0 auto;
+		}
+
 	}
 	
 </style>
