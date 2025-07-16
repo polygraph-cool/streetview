@@ -93,15 +93,15 @@
 
 	{#each copy.body || [] as { type, value: props, component }, idx (idx)}
 		{#if type === "intro"}
-			<StreetScroller {props} {type} markers={markersByBlock[type]} count={"first"} height={height} width={width} {scrollY}/>
+			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={"first"} height={height} width={width} {scrollY}/> -->
 		{:else if type === "intro2"}
-			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/>
+			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/> -->
 		{:else if type === "intro3"}
-			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/>
+			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/> -->
 		{:else if type === "imageGridVideo"}
-			<div class="text-section">
+			<!-- <div class="text-section">
 				<VideoPlayer {scrollY} {height}/>
-			</div>
+			</div> -->
 		{:else if type === "gridScroller"}
 			<div class="grid-section">
 				{#each props.slides as slide, i}
@@ -158,7 +158,7 @@
 							</p>	
 						</div>
 						
-						<img src="assets/images/{slide.img}" style="margin-bottom:50px;">
+						<img alt="Map of NYC showing the location of text that appears in Google Street View matching the phrase &ldquo;{slide.title}&rdquo;" src="assets/images/{slide.img}" style="margin-bottom:50px;">
 					</div>
 				{/each}
 			</div>
@@ -173,7 +173,7 @@
 					{/if}
 
 					{#if type === "image"}
-						<img src='assets/images/{props}' style="margin-bottom:{className === "pizza" ? '10px' : '50px'};">
+						<img alt="Map of NYC showing the location of text that appears in Google Street View matching the phrase &ldquo;{props.replace('.jpg', '')}&rdquo;" src='assets/images/{props}' style="margin-bottom:{className === "pizza" ? '10px' : '50px'};">
 						{#if className === "pizza"}
 							<p class="map-slide-text">
 								<a target="_blank" href="https://www.alltext.nyc/search?q=pizza">View Images of &ldquo;Pizza&rdquo; <span><ExternalLink color="white" /></span></a>

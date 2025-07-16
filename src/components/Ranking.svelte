@@ -76,15 +76,18 @@
             return offset;
         }
     
-        let index = streetsOnlyTerms.findIndex(r => r === rankToShow);
+        let index = streetsOnlyTermsBackUp.findIndex(r => r === rankToShow);
         return (-1 * (((index - 1) * lineHeight * scaleValue) - (height * 0.5) + (lineHeight * scaleValue) + offset));
 	});
 
     let offset = $state(100);
 
-    let masterRanking = $state(rankData.slice(0,1500).map(d => d));
-    let streetsOnly = $state(rankData.filter(r => +r.street !== 1).slice(0,1500));
-    let streetsOnlyTerms = $state(rankData.filter(r => +r.street !== 1).slice(0,1500).map(r => r.term));
+    let masterRanking = $state(rankData.slice(0,50).map(d => d));
+    let streetsOnly = $state(rankData.filter(r => +r.street !== 1).slice(0,50));
+    let streetsOnlyTerms = $state(rankData.filter(r => +r.street !== 1).slice(0,50).map(r => r.term));
+
+    let streetsOnlyTermsBackUp = $state(rankData.filter(r => +r.street !== 1).slice(0,1500).map(r => r.term));
+
 
     let ranking = $derived(masterRanking.map(r => r.term));
     
@@ -234,6 +237,7 @@
     <div style="height: {height}px; --offset: {offset}px;" class="{Math.abs(calculatedOffset) > offset ? 'hideTitle' : ''} container value-{value} {value || value === 0 ? 'container-visible' : ''}">
          <div class="rank-wrapper"
          class:showStreet={triggerIndex[value] === "color"}
+         class:showStreetBackUp={value > 1}
          style="transform: translate3d(0px, {calculatedOffset}px, 0px) scale({getScale(value)});"
          >
             {#each filterData(value) as rank, i (rank)}
@@ -241,9 +245,21 @@
 
                 <p 
                 class:highlight
-                class:street={+masterRanking[i].street === 1}
+                class:street={+rankData[i].street === 1}
                 animate:flip={{ duration: 600, delay: 0 }}
                 style="transform: translate3d(0px, {i * lineHeight}px, 0px);"
+                >
+                    {rank}
+                    <span>{i + 1}<sup style="font-size: 8px;">{getOrdinal(i + 1)}</sup></span>
+                </p>
+            {/each}
+            {#each streetsOnlyTermsBackUp as rank, i}
+                {@const highlight = rank === rankToShow}
+                <p
+                    class="back-up"
+                    class:highlight
+                    class:street={+rankData[i].street === 1}
+                    style="opacity:{i < 50 ? 0 : 1}; transform: translate3d(0px, {i * lineHeight}px, 0px);"
                 >
                     {rank}
                     <span>{i + 1}<sup style="font-size: 8px;">{getOrdinal(i + 1)}</sup></span>
@@ -283,7 +299,9 @@
                                 <div class="example-grid-item item-{i}"
                                     style="grid-column-start: {slideStyles[count].gridColumnStart}; justify-content: {slideStyles[count].justifyContent}; justify-self: {slideStyles[count].justifySelf};"
                                 >
-                                    <a class="example-grid-item-link" href="https://maps.app.goo.gl/{locations[termTemp][i].link}" target="_blank"><img style="height: auto;" alt="" class="" src="assets/images/{termTemp}_{i}.jpg"></a>
+                                    <a class="example-grid-item-link" href="https://maps.app.goo.gl/{locations[termTemp][i].link}" target="_blank">
+                                        <img style="height: auto;" alt="Google Street View image of streetscape from ground level, viewing an example of &ldquo;{slide.trigger}&rdquo; located at {locations[termTemp][i].text}, NYC" class="" src="assets/images/{termTemp}_{i}.jpg">
+                                    </a>
                                     <span class="grid-item-text">{locations[termTemp][i].text}<a href="https://maps.app.goo.gl/{locations[termTemp][i].link}" target="_blank"><ExternalLink color="white" /></a></span>
                                 </div>
                             {/each}
@@ -523,7 +541,7 @@
         color: rgba(255, 255, 255, 0.6);
         text-decoration-color: currentColor;
         font-weight: 400;
-        font-size: 12px;
+        font-size: 10px;
         /* text-transform: uppercase; */
         max-width: 200px;
         line-height: 1.2;
@@ -536,7 +554,7 @@
         text-decoration-color: currentColor;
         width: 1.5em;
         display: inline-block;
-		height: 1.5em;
+		height: 0;
 		border-radius: 50%;
 		text-align: center;
 		display: inline-flex;
@@ -544,6 +562,7 @@
 		align-items: center;
 		margin-left: 3px;
 		padding: 2px;
+        transform: translate(0, 50%);
     }
 
     .exposition-grid {
@@ -668,6 +687,14 @@
 
         p.text-bg, p.text-fg {
             font-size: 16px;
+        }
+
+        .container .back-up {
+            opacity: 1;
+        }
+
+        .container.showStreetBackUp .back-up{
+            opacity: 1;
         }
     }
 

@@ -156,7 +156,8 @@
                             <div class="example-grid-item item-{i}" bind:this={_triggerArt[i]}
                                 style="grid-column-start: {slideStyles[count].gridColumnStart}; justify-content: {slideStyles[count].justifyContent}; justify-self: {slideStyles[count].justifySelf};"
                             >
-                                <a class="example-grid-item-link" href="https://maps.app.goo.gl/{locations[slide.images][i].link}" target="_blank"><img style="height: auto;" alt="" class="" src="assets/images/{slide.images}_{i}.jpg"></a>
+                                <a class="example-grid-item-link" href="https://maps.app.goo.gl/{locations[slide.images][i].link}" target="_blank">
+                                    <img style="height: auto;" alt="Google Street View image of streetscape from ground level, viewing an example of &ldquo;{slide.title}&rdquo; located at {locations[slide.images][i].text}, NYC" class="" src="assets/images/{slide.images}_{i}.jpg"></a>
                                 <span class="grid-item-text">{locations[slide.images][i].text}<a href="https://maps.app.goo.gl/{locations[slide.images][i].link}" target="_blank"><ExternalLink color="white" /></a></span>
                             </div>
                         {/each}
@@ -313,7 +314,7 @@
         text-decoration-color: currentColor;
         width: 1.5em;
         display: inline-block;
-		height: 1.5em;
+		height: 0;
 		border-radius: 50%;
 		text-align: center;
 		display: inline-flex;
@@ -321,6 +322,7 @@
 		align-items: center;
 		margin-left: 3px;
 		padding: 2px;
+        transform: translate(0, 50%);
     }
 	@media only screen and (max-width: 600px) {
         .example-grid {

@@ -24,9 +24,16 @@
 
     onMount(() => {
         props.slides.forEach((slide, i) => {
-            waypoints[i] = slide.coords.split(",").map(d => +d);
+			if(width < 600){
+				waypoints[i] = slide.coordsMobile.split(",").map(d => +d);
+			}
+			else {
+				waypoints[i] = slide.coords.split(",").map(d => +d);
+			}
+            
             zoomLevels[i] = +slide.zoom;
         });
+		console.log(waypoints);
         waysSet = true;
     });
 
