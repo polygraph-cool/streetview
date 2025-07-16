@@ -93,11 +93,11 @@
 
 	{#each copy.body || [] as { type, value: props, component }, idx (idx)}
 		{#if type === "intro"}
-			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={"first"} height={height} width={width} {scrollY}/> -->
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={"first"} height={height} width={width} {scrollY}/>
 		{:else if type === "intro2"}
-			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/> -->
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/>
 		{:else if type === "intro3"}
-			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/> -->
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/>
 		{:else if type === "imageGridVideo"}
 			<div class="text-section">
 				<VideoPlayer {scrollY} {height}/>
