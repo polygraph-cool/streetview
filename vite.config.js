@@ -28,6 +28,9 @@ export default defineConfig({
 			three: path.resolve("./node_modules/three")
 		}
 	},
+	server: {
+		allowedHosts: ["4a925be2fdfa.ngrok-free.app"]
+	},
 	ssr: {
 		noExternal: ["bits-ui"]
 	},

@@ -156,7 +156,7 @@
                             <div class="example-grid-item item-{i}" bind:this={_triggerArt[i]}
                                 style="grid-column-start: {slideStyles[count].gridColumnStart}; justify-content: {slideStyles[count].justifyContent}; justify-self: {slideStyles[count].justifySelf};"
                             >
-                                <a href="https://maps.app.goo.gl/{locations[slide.images][i].link}" target="_blank"><img style="height: auto;" alt="" class="" src="assets/images/{slide.images}_{i}.jpg"></a>
+                                <a class="example-grid-item-link" href="https://maps.app.goo.gl/{locations[slide.images][i].link}" target="_blank"><img style="height: auto;" alt="" class="" src="assets/images/{slide.images}_{i}.jpg"></a>
                                 <span class="grid-item-text">{locations[slide.images][i].text}<a href="https://maps.app.goo.gl/{locations[slide.images][i].link}" target="_blank"><ExternalLink color="white" /></a></span>
                             </div>
                         {/each}
@@ -270,6 +270,26 @@
     .example-grid-item img {
         border-radius: 8px;
         max-width: 200px;
+    }
+    .example-grid-item .example-grid-item-link {
+        position: relative;
+    }
+    .example-grid-item .example-grid-item-link:before {
+        content: 'Source: Google';
+        position: absolute;
+        right: 0;
+        font-family: var(--sans);
+        font-size: 10px;
+        font-weight: 400;
+        text-align: center;
+        right: 0;
+        padding: 0 3px 2px;
+        width: fit-content;
+        border-bottom-right-radius: 8px;
+        bottom: 0;
+        color: rgba(0,0,0,.9);
+        background-color: #a7a7a7;
+        z-index: 100000000000000000;
     }
 
     .grid-item-text {

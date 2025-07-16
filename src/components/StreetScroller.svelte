@@ -7,7 +7,7 @@
 	import Scrolly from "$components/helpers/Scrolly.svelte";
 	import { isPageLoading } from "$utils/appState.svelte.js";
 
-	let { props, markers, count, height, type, scrollY } = $props();
+	let { props, markers, count, height, type, scrollY, width } = $props();
 	let dimensions = new useWindowDimensions();
 
     let waypoints = {};
@@ -40,6 +40,7 @@
 
     // Create a debounced function for setting position
 
+	$inspect(type,value);
 
     $effect(() => {
         if(value === undefined || value === null){
@@ -68,31 +69,39 @@
     }, 10);
 
 	$effect(() => {
+		if (waysSet) {
+			if (valueSet === undefined || valueSet === null) {
+				debouncedSetPosition(
+					props.default_coords.split(",").map((d) => +d),
+					50
+				);
+				return;
+			}
 
-        if(waysSet) {
-            if (valueSet === undefined || valueSet === null) {
-                debouncedSetPosition(props.default_coords.split(",").map(d => +d),50);
-                return;
-            }
-            
-            const currentZoom = zoomLevels[valueSet] ? zoomLevels[valueSet] : 50;
-            const prevZoom = zoomLevels[valueSet - 1] ?? 50;
+			const currentZoom = zoomLevels[valueSet] ? zoomLevels[valueSet] : 50;
+			const currentWaypoint = waypoints[valueSet] ?? waypoints[0];
 
-            const currentWaypoint = waypoints[valueSet] ?? waypoints[0];
-            const prevWaypoint = waypoints[valueSet - 1] ?? props.default_coords.split(",").map(d => +d);
-            const rawProgress = percentScrolledValues[valueSet] ?? 0;
-            
-            // Apply easing to the progress
-            const easedProgress = easeCubicInOut(rawProgress);
-            
-            // Interpolate both coordinates using eased progress
-            const x = prevWaypoint[0] + (currentWaypoint[0] - prevWaypoint[0]) * easedProgress;
-            const y = prevWaypoint[1] + (currentWaypoint[1] - prevWaypoint[1]) * easedProgress;
-            const zoomed = Math.round(prevZoom + (currentZoom - prevZoom) * easedProgress);
+			if (width < 600) {
+				// On mobile, jump directly to the end state of the current slide
+				debouncedSetPosition(currentWaypoint, currentZoom);
+			} else {
+				// On desktop, tween between the previous and current slide states
+				const prevZoom = zoomLevels[valueSet - 1] ?? 50;
+				const prevWaypoint = waypoints[valueSet - 1] ?? props.default_coords.split(",").map((d) => +d);
+				const rawProgress = percentScrolledValues[valueSet] ?? 0;
 
-            // Use debounced function instead of direct assignment
-            debouncedSetPosition([x, y],zoomed);
-        }
+				// Apply easing to the progress
+				const easedProgress = easeCubicInOut(rawProgress);
+
+				// Interpolate both coordinates using eased progress
+				const x = prevWaypoint[0] + (currentWaypoint[0] - prevWaypoint[0]) * easedProgress;
+				const y = prevWaypoint[1] + (currentWaypoint[1] - prevWaypoint[1]) * easedProgress;
+				const zoomed = Math.round(prevZoom + (currentZoom - prevZoom) * easedProgress);
+
+				// Use debounced function instead of direct assignment
+				debouncedSetPosition([x, y], zoomed);
+			}
+		}
 	});
 
 	function constrain(n, low, high) {
@@ -135,7 +144,7 @@
 	});
 
 	// Example panorama URL - you should replace this with your actual Google Street View panorama URL
-	const panoramaUrl = `assets/images/${props.panorama_id}.jpg`;
+	const panoramaUrl = width > 600 ? `assets/images/${props.panorama_id}.jpg` : `assets/images/${props.panorama_id}_mobile.jpg`;
 
 </script>
 
@@ -173,11 +182,13 @@
                         value={valueSet}
                         markersRaw={markers}
                         type={type}
+						width={width}
 						height={height}
 						defaultCoords={props.default_coords.split(",").map(d => +d)}
                         bind:isPanoramaLoaded={panoramaHasLoaded}
                     />
                 {/if}
+				<p class="source">Source: Google Street View, {props.source}</p>
             </div>
             <div class="text" style="">
                 <Scrolly 
@@ -400,6 +411,21 @@
 
 	.opener p.loading span {
 		background: rgb(116, 252, 208);
+	}
+
+	p.source {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		font-size: 10px;
+		font-family: var(--sans);
+		color: rgba(255,255,255,.8);
+		background-color: #000;
+		z-index: 10000000000;
+		top: auto;
+		padding: 0 3px 2px;
+		z-index: 100000000000000000;
+
 	}
 
 	@media only screen and (max-width: 700px) {

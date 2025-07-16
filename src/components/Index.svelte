@@ -28,7 +28,8 @@
 	let wrongAnswers = $state({});
 	let unlockedTitles = $state({});
 
-	$inspect(unlockedTitles);
+
+	
 
 	let dimensions = new useWindowDimensions();
 
@@ -48,6 +49,8 @@
 	});
 	
 	let copy = getContext("copy");
+	$inspect(copy);
+
 
 	function showHint() {
 		modalContent.set({
@@ -90,11 +93,11 @@
 
 	{#each copy.body || [] as { type, value: props, component }, idx (idx)}
 		{#if type === "intro"}
-			<StreetScroller {props} {type} markers={markersByBlock[type]} count={"first"} height={height} {scrollY}/>
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={"first"} height={height} width={width} {scrollY}/>
 		{:else if type === "intro2"}
-			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} {scrollY}/>
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/>
 		{:else if type === "intro3"}
-			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} {scrollY}/>
+			<StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/>
 		{:else if type === "imageGridVideo"}
 			<div class="text-section">
 				<VideoPlayer {scrollY} {height}/>
@@ -161,7 +164,8 @@
 			</div>
 
 		{:else if type === "section"}
-			<div class="text-section {props.className}">
+			{@const className = props.className}
+			<div class="text-section {className}">
 				{#each props.section || [] as { type, value: props, component }, idx (idx)}
 
 					{#if type === "text"}
@@ -169,8 +173,14 @@
 					{/if}
 
 					{#if type === "image"}
-						<img src={props.media} style="margin-bottom:50px;">
+						<img src='assets/images/{props}' style="margin-bottom:{className === "pizza" ? '10px' : '50px'};">
+						{#if className === "pizza"}
+							<p class="map-slide-text">
+								<a target="_blank" href="https://www.alltext.nyc/search?q=pizza">View Images of &ldquo;Pizza&rdquo; <span><ExternalLink color="white" /></span></a>
+							</p>
+						{/if}
 					{/if}
+					
 				{/each}
 			</div>
 		{:else if type === "ranking"}
@@ -194,7 +204,6 @@
 		margin-top: 60px;
 		font-weight: 600;
 		text-align: left;
-		max-width: 600px;
 		margin: 0 auto;
 		font-family: var(--sans);
 		-webkit-font-smoothing: antialiased;
@@ -202,6 +211,8 @@
 		margin-bottom: 30px;
 		opacity: 1;
 		color: #ffc868;
+		max-width: 600px;
+		width: calc(100% - 20px);
 	}
 	.map-section {
 		display: grid;
@@ -372,9 +383,11 @@
 	}
 
 	h1 {
-		font-size: 100px;
+		font-size: 89px;
 		line-height: 1.1;
 		margin-bottom: 50px;
+		letter-spacing: -2px;
+		text-transform: uppercase;
 	}
 
 	h3 {
@@ -391,12 +404,12 @@
 			width: calc(100% - 20px);
 		}
 		h1 {
-			font-size: 55px;
+			font-size: 48px;
 			margin-bottom: 10px;
 		}
 
 		h3 {
-			font-size: 24px;
+			font-size: 21px;
 			max-width: 375px;
 			margin: 0 auto;
 		}

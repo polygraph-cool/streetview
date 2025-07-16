@@ -3,7 +3,7 @@
     import { browser } from '$app/environment';
     import { scaleLinear } from "d3-scale";
 
-    let { defaultCoords, panoramaUrl, coords, zoom, value, markersRaw, type, height, isPanoramaLoaded = $bindable(false) } = $props();
+    let { defaultCoords, panoramaUrl, coords, zoom, value, markersRaw, type, height, width, isPanoramaLoaded = $bindable(false) } = $props();
     let viewerContainer;
     let viewer;
     let opacity = $state(0);
@@ -159,33 +159,36 @@
             prevCoords = currentCoords;
             prevZoom = zoom;
 
-            if (debounceTimer) {
-                clearTimeout(debounceTimer);
+            if(width < 600){
+
+                if(!isAnimating){
+                    isAnimating = true;
+
+                    viewer.animate({
+                        yaw: currentCoords[0],
+                        pitch: currentCoords[1],
+                        zoom: zoom,
+                        speed: 1000,
+                    })  
+                    .then(() => {
+                            isAnimating = false;
+                        });
+                }
+            } else {
+                if (debounceTimer) {
+                    clearTimeout(debounceTimer);
+                }
+                debounceTimer = setTimeout(() => {
+                    
+                    viewer.rotate({
+                        yaw: currentCoords[0],
+                        pitch: currentCoords[1],
+                    })  
+                    viewer.zoom(zoom);
+                }, 10);
             }
-            // Batch the operations to reduce reflows
-            debounceTimer = setTimeout(() => {
-                // console.log("new coorrds")
-                
 
-                // if(!isAnimating){
-                //     isAnimating = true;
 
-                //     viewer.animate({
-                //         yaw: currentCoords[0],
-                //         pitch: currentCoords[1],
-                //         zoom: zoom,
-                //         speed: 0,
-                //     })  
-                //     .then(() => {
-                //             isAnimating = false;
-                //         });
-                // }
-                viewer.rotate({
-                    yaw: currentCoords[0],
-                    pitch: currentCoords[1],
-                })  
-                viewer.zoom(zoom);
-            }, 10);
         }
     });
 
@@ -214,6 +217,11 @@
                         }],
                     ],
                 });
+
+                // viewer.addEventListener('position-updated', ({ position }) => (
+                //     console.log('position-updated', position)
+                // ));
+
 
                 viewer.addEventListener('panorama-loaded', (event) => {
                     isPanoramaLoaded = true; // <-- Notify the parent by updating the bound prop

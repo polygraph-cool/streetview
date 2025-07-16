@@ -283,13 +283,13 @@
                                 <div class="example-grid-item item-{i}"
                                     style="grid-column-start: {slideStyles[count].gridColumnStart}; justify-content: {slideStyles[count].justifyContent}; justify-self: {slideStyles[count].justifySelf};"
                                 >
-                                    <a href="https://maps.app.goo.gl/{locations[termTemp][i].link}" target="_blank"><img style="height: auto;" alt="" class="" src="assets/images/{termTemp}_{i}.jpg"></a>
+                                    <a class="example-grid-item-link" href="https://maps.app.goo.gl/{locations[termTemp][i].link}" target="_blank"><img style="height: auto;" alt="" class="" src="assets/images/{termTemp}_{i}.jpg"></a>
                                     <span class="grid-item-text">{locations[termTemp][i].text}<a href="https://maps.app.goo.gl/{locations[termTemp][i].link}" target="_blank"><ExternalLink color="white" /></a></span>
                                 </div>
                             {/each}
                         </div>
                         {#if Object.keys(slide).indexOf("post") > -1}
-                            <div class="text-wrapper" style="--height: {height}px;">
+                            <div class="text-wrapper" style="--height: {height}px; margin-top: 100px; margin-bottom: {height/2}px;">
                                 <p class="text-fg exposition post" style="opacity: 1">
                                     <span class="text-inner">{@html slide.post}</span>
                                 </p>
@@ -371,9 +371,7 @@
     }
 
     .post {
-        margin-top: 100px;
         font-size: 18px;
-        margin-bottom: calc(var(--height) / 2);
     }
 
     .container p {
@@ -490,6 +488,28 @@
         opacity: 1;
 		transition: opacity 0.3s ease-in-out;
 	}
+
+    .example-grid-item .example-grid-item-link {
+        position: relative;
+    }
+    .example-grid-item .example-grid-item-link:before {
+        content: 'Source: Google';
+        position: absolute;
+        right: 0;
+        font-family: var(--sans);
+        font-size: 10px;
+        font-weight: 400;
+        text-align: center;
+        right: 0;
+        padding: 0 3px 2px;
+        width: fit-content;
+        border-bottom-right-radius: 8px;
+        bottom: 0;
+        color: rgba(0,0,0,.9);
+        background-color: #a7a7a7;
+        z-index: 1;
+    }
+
 
     .example-grid-item img {
         border-radius: 8px;
