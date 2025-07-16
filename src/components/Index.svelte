@@ -257,11 +257,11 @@
 		color: rgba(255,255,255,.8);
 	}
 	.map-slide-text {
-		font-size: 14px;
+		font-size: 16px;
 		line-height: 1.5;
 		opacity: 1;
 		margin-top: 0px;
-		color: rgba(255,255,255,.8);
+		color: rgba(255,255,255,.9);
 	}
 
 	.map-slide-text a {
