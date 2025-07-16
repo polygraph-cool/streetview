@@ -60,11 +60,14 @@
         bind:currentTime={currentTime}
         bind:duration={videoDuration}
 		src="assets/images/NYCText.mp4"
+        aria-label="Video of NYC streetscapes with text that appears in Google Street View, timed to the song 'Empire State of Mind' by Alicia Keys and Jay-Z"
+        aria-describedby="video-caption"
 		loop
 		muted={isMuted}
 		playsinline
 		autoplay
 	></video>
+    <p id="video-caption">♬♫♩♪ New York...concrete jungle where dreams are made of...</p>
 </div>
 <div style="" class="button-wrapper">
     <button class="mute-btn" on:click={toggleMute} aria-label={isMuted ? "Unmute" : "Mute"}>
@@ -78,7 +81,7 @@
             ></span>
         </div>
     </button>
-    <p>&lsquo;Empire State of Mind&rsquo; by Alicia Keys & Jay-Z</p>  
+    <p>&lsquo;Empire State of Mind&rsquo; by Alicia Keys & <span style="white-space: nowrap;">Jay-Z</span></p>  
 </div>
 
 <style>
@@ -107,6 +110,15 @@
         background-size: 100% 100%;
         background-position: center;
         background-repeat: no-repeat;
+    }
+    #video-caption {
+        font-family: var(--sans);
+        font-size: 11px;
+        color: #fff;
+        margin-top: 10px;
+        text-align: center;
+        -webkit-font-smoothing: antialiased;
+        font-weight: 600;
     }
     .mute-btn-icon {
         background-color: white;
@@ -156,7 +168,7 @@
 
     @media only screen and (max-width: 500px) {
         .video-container {
-            max-width: calc(100% - 50px);
+            max-width: calc(100% - 0px);
         }
     }
 </style>

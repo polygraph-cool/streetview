@@ -99,9 +99,9 @@
 		{:else if type === "intro3"}
 			<!-- <StreetScroller {props} {type} markers={markersByBlock[type]} count={null}	height={height} width={width} {scrollY}/> -->
 		{:else if type === "imageGridVideo"}
-			<!-- <div class="text-section">
+			<div class="text-section">
 				<VideoPlayer {scrollY} {height}/>
-			</div> -->
+			</div>
 		{:else if type === "gridScroller"}
 			<div class="grid-section">
 				{#each props.slides as slide, i}

@@ -161,9 +161,9 @@
                                 <span class="grid-item-text">{locations[slide.images][i].text}<a href="https://maps.app.goo.gl/{locations[slide.images][i].link}" target="_blank"><ExternalLink color="white" /></a></span>
                             </div>
                         {/each}
-                        <a href="https://www.alltext.nyc/map?q={slide.images}"><button class="view-map">View the Map of &ldquo;{slide.title}&rdquo; <span><ExternalLink color="white" /></span></button></a>
                     {/if}
                 </div>
+                <a class="view-map-link" href="https://www.alltext.nyc/map?q={slide.images}"><button class="view-map">View the Map of &ldquo;{slide.title}&rdquo; <span><ExternalLink color="white" /></span></button></a>
             </Scrolly>
         </div>
     </div>
@@ -172,13 +172,12 @@
 
 
 <style>
+    .view-map-link {
+        display: block;
+        margin-top: 20px;
+    }
     .view-map {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
         text-align: center;
-        transform: translate(0, 100px);
         width: fit-content;
         margin: 0 auto;
         background: #3F3F3F;
@@ -186,10 +185,13 @@
         border-radius: 8px;
         padding-left: 8px;
         padding-right: 8px;
-        font-size: 16px;
+        font-size: 14px;
         font-family: var(--sans);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        margin-top: 40px;
+        display: block;
+
     }
     .view-map span {
         font-size: 14px;
