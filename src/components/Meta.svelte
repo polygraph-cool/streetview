@@ -2,7 +2,7 @@
 	let {
 		title = "Title TK",
 		description = "Description TK",
-		url = "https://pudding.cool",
+		url = "https://pudding.cool/2025/07/street-view",
 		keywords = "",
 		preloadFont = []
 	} = $props();
@@ -31,7 +31,7 @@
 	<meta name="twitter:creator" content="@puddingviz" />
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:description" content={description} />
-	<meta name="twitter:image:src" content="{url}/assets/social-twitter.jpg" />
+	<meta name="twitter:image:src" content="{url}/assets/social-facebook.jpg" />
 
 	<meta name="robots" content="max-image-preview:large" />
 
