@@ -9,4 +9,4 @@ export const bgColor = writable('black');
 
 export const isModalOpen = writable(false);
 export const modalContent = writable({});
-export const isPageLoading = writable(true); 
+export const isPageLoading = writable(false); 
