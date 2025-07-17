@@ -106,12 +106,18 @@
 			<div class="grid-section">
 				{#each props.slides as slide, i}
 					<div class="text-section">
-						 <p>{slide.text}
+						 <p>{@html slide.text}
 						 </p>
 					</div>
 
-					{#if ["acab", "fuhgeddaboudit", "covid","fuck"].indexOf(slide.images) > -1}
+					<!-- {#if ["acab", "fuhgeddaboudit", "covid","fuck","ball"].indexOf(slide.images) > -1} -->
 						<GridScroller height={height} slide={slide} {scrollY}/>
+					<!-- {/if} -->
+					{#if slide.images == "ball"}
+						<div class="text-section">
+							<p>{@html slide.post}
+							</p>
+						</div>
 					{/if}
 				{/each}
 			</div>			
