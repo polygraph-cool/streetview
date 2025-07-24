@@ -41,7 +41,6 @@
 			const data = await response.json();
 
 			const filtered = data.filter((d) => !localURL.includes(d.url));
-      console.log(filtered);
 			const withSlug = filtered.map((d) => ({
 				...d,
 				tease: d.hed,

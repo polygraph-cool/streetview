@@ -33,7 +33,6 @@
             
             zoomLevels[i] = +slide.zoom;
         });
-		console.log(waypoints);
         waysSet = true;
     });
 
@@ -44,10 +43,6 @@
 	let percentScrolledValues = $state([]);
 
 	let position = $state([0, 0]);
-
-    // Create a debounced function for setting position
-
-	$inspect(type,value);
 
     $effect(() => {
         if(value === undefined || value === null){
@@ -292,6 +287,7 @@
 		left: 0;
 		opacity: .95;
 		width: 100%;
+		pointer-events: none;
 	}
 
 	.text-fg span {
@@ -314,6 +310,7 @@
 		color: rgba(0,0,0,0);
 		background-color: var(--color-fg);
 		box-shadow: 15px 0 var(--color-fg), -15px 0 var(--color-fg);
+		pointer-events: none;
 	}
 
 	.intro {
@@ -390,6 +387,7 @@
 	.opener .text-bg span {
 		background: #000;
 		box-shadow: 15px 0 #000, -15px 0 #000;
+		pointer-events: none;
 	}
 
 	.opener .text-fg, .opener .text-bg {

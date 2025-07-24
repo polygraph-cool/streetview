@@ -5,10 +5,6 @@
 	import Modal from '$components/helpers/Modal.svelte';
 
 	let { children } = $props();
-
-	$effect(() => {
-		console.log('isPageLoading:', $isPageLoading);
-	});
 </script>
 
 <!-- <Header /> -->

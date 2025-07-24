@@ -609,6 +609,7 @@
 		left: 0;
 		opacity: .95;
 		width: 100%;
+        pointer-events: none;
 	}
 
 	.text-fg span {
@@ -631,6 +632,7 @@
 		color: rgba(0,0,0,0);
 		background-color: #111;
 		box-shadow: 15px 0 #111, -15px 0 #111;
+        pointer-events: none;
 	}
 
 
@@ -683,7 +685,8 @@
 		    color: rgba(255,255,255,0);
 		    background-color: #222;
 		    box-shadow: 15px 0 #222, -15px 0 #222;
-		}
+            pointer-events: none;
+        }
 
         p.text-bg, p.text-fg {
             font-size: 16px;

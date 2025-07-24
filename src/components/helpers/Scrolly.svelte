@@ -56,8 +56,6 @@
 				}
 			}
 		}
-
-		// console.log('Final steps:', steps, 'maxIndex:', maxIndex, 'maxRatio:', maxRatio);
 		
 		if (maxRatio > 0) value = maxIndex;
 		else value = prevValue; //undefined
@@ -76,15 +74,7 @@
 			} else {
 				steps[index] = 0; // Force to 0 when not intersecting
 			}
-			
-			// Debug: log all intersection events
-			// console.log(`Node ${index}:`, {
-			// 	intersecting,
-			// 	ratio,
-			// 	boundingRect: rect,
-			// 	steps: [...steps]
-			// });
-			
+						
 			mostInView();
 		};
 

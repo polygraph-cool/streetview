@@ -145,9 +145,6 @@
             return markerSet;
         }).flat();
 
-        // console.log(markers)
-
-        // console.log('Parsed markers:', markers);
     }
 
     $effect(() => {
@@ -218,27 +215,13 @@
                     ],
                 });
 
-                // viewer.addEventListener('position-updated', ({ position }) => (
-                //     console.log('position-updated', position)
-                // ));
-
-
                 viewer.addEventListener('panorama-loaded', (event) => {
                     isPanoramaLoaded = true; // <-- Notify the parent by updating the bound prop
-
-                    if(type === "intro"){
-                        console.log('Panorama image loaded', event);
-                    }
-                    // console.log('isViewerReady set to true. Initial position:', viewer.getPosition());
                 });
 
                 viewer.addEventListener('ready', () => {
-                    if(type === "intro"){
-                        console.log("ready",coords)
-                    }
                     opacity = 1;
                     isViewerReady = true; // <<< Set viewer ready flag
-
                 });
 
             } catch (error) {

@@ -49,8 +49,6 @@
 	});
 	
 	let copy = getContext("copy");
-	$inspect(copy);
-
 
 	function showHint() {
 		modalContent.set({
@@ -398,6 +396,8 @@
 
 	h3 {
 		font-size: 36px;
+		max-width: 500px;
+    	margin: 0 auto;
 	}
 
 	.head p {
