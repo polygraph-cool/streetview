@@ -7,7 +7,7 @@
     import Grid from "$data/grid.csv";
 
 
-    let { height, slide, scrollY } = $props();
+    let { height, slide, scrollY, width } = $props();
 
 	let value = $state();
     let valueSet = $state(null);
@@ -344,8 +344,6 @@
         .example-grid-item img {
             width: 100%;
         }
-
-
     }
 
 

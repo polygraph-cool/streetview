@@ -109,7 +109,7 @@
 					</div>
 
 					<!-- {#if ["acab", "fuhgeddaboudit", "covid","fuck","ball"].indexOf(slide.images) > -1} -->
-						<GridScroller height={height} slide={slide} {scrollY}/>
+						<GridScroller width={width} height={height} slide={slide} {scrollY}/>
 					<!-- {/if} -->
 					{#if slide.images == "ball" || slide.images == "fuck"}
 						<div class="text-section">
