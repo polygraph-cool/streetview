@@ -29,7 +29,7 @@ export default defineConfig({
 		}
 	},
 	server: {
-		allowedHosts: ["4a925be2fdfa.ngrok-free.app"]
+		allowedHosts: ["9f8182eb774c.ngrok-free.app"]
 	},
 	ssr: {
 		noExternal: ["bits-ui"]

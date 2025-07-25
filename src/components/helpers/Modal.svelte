@@ -1,13 +1,15 @@
 <script>
     import { isModalOpen, modalContent } from '$utils/appState.svelte.js';
     import { fade } from 'svelte/transition';
+
+    let { height } = $props();
 </script>
 
 {#if $isModalOpen}
     <div class="modal-backdrop" transition:fade={{ duration: 300 }}>
         <div class="modal-content">
             {#if $modalContent.type === 'image'}
-                <img src={$modalContent.src} alt="Hint">
+                <img style="height: {height*.8}px;" src={$modalContent.src} alt="Hint">
             {/if}
         </div>
     </div>
@@ -29,7 +31,7 @@
 
     .modal-content img {
         max-width: 80vw;
-        max-height: 80vh;
+        max-height: var(--height);
         display: block;
         border-radius: 10px;
     }

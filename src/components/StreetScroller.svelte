@@ -171,9 +171,6 @@
 					</div>
 				{/if}
 
-                <!-- <p class="moving" style="left: {position[0]}%; background:black;color:white; font-family: monospace; z-index: 10000000000000;">
-                    Value: {value}, Progress: {percentScrolledValues[value] ? percentScrolledValues[value].toFixed(6) : '0.00'}, Position: {position.map(x => x.toFixed(6)).join(', ')}
-                </p> -->
                 {#if position}
                     <StreetView 
                         panoramaUrl={panoramaUrl}
@@ -202,7 +199,7 @@
                         {@const isFirst = i === 0}
                         {@const isFirstIntro = i === 0 && count === "first"}
                         {@const isLast = i === props.slides.length - 1}
-                        <div style="--height: {height}px;" class:active class:isLast class:isFirstIntro class:isFirst class="step-{i} scrolly-block" bind:this={_triggerArt[i]}>
+                        <div style="--height: {height}px;" class:isLast class:isFirstIntro class:isFirst class="step-{i} scrolly-block" bind:this={_triggerArt[i]}>
                             <div class="text-wrapper">
                                 <p class="text-fg" style="opacity: 1">
                                     <span class="text-inner">{step.text}</span>
