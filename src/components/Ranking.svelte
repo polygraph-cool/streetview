@@ -293,7 +293,7 @@
 
 
                         <!-- <p class="exposition exposition-grid"></p> -->
-                        <div class="example-grid">
+                        <div class="example-grid" style="grid-auto-rows: {height * (width < 650 ? .4 : .45)}px;">
                             {#each locations[termTemp] as gridSlide, i}
                                 {@const count = i % locations[termTemp].length}
                                 <div class="example-grid-item item-{i}"

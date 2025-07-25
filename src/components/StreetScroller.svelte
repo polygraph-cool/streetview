@@ -1,6 +1,5 @@
 <script>
 	import StreetView from "./StreetView.svelte";
-	import useWindowDimensions from "$runes/useWindowDimensions.svelte.js";
     import debounce from "lodash.debounce";
 	import { easeCubicInOut } from 'd3-ease';
     import { onMount } from "svelte";
@@ -8,7 +7,6 @@
 	import { isPageLoading } from "$utils/appState.svelte.js";
 
 	let { props, markers, count, height, type, scrollY, width } = $props();
-	let dimensions = new useWindowDimensions();
 
     let waypoints = {};
     let waysSet = $state(false);
@@ -156,7 +154,7 @@
             <div class="container value-{valueSet} {value || value === 0 ? 'container-visible' : ''}" style="height: {height}px;">
 				{#if count === "first"}
 	
-					<div class="opener" style="opacity:{percentScrolledValues[0] ? (1-percentScrolledValues[0]) : 1};">
+					<div class="opener" style="height:{height}px; opacity:{percentScrolledValues[0] ? (1-percentScrolledValues[0]) : 1};">
 						<p class="text-fg" style="opacity: 1">
 							<span class="text-inner">{props.slides[0].text}</span>
 						</p>
@@ -168,7 +166,7 @@
 						{/if}
 					</div>
 
-					<div class="screen" style="opacity:{percentScrolledValues[0] ? (1-percentScrolledValues[0]) : 1};">
+					<div class="screen" style="height:{height}px; opacity:{percentScrolledValues[0] ? (1-percentScrolledValues[0]) : 1};">
 
 					</div>
 				{/if}

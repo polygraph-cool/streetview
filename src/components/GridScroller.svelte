@@ -147,7 +147,7 @@
         </div>
         <div class="text" style="margin-top: {slide.title === 'Fuhgeddaboudit' ? '200px' : ''}">
             <Scrolly bind:value top={height/2} bottom={100} increments={10}>
-                <div class="example-grid">
+                <div class="example-grid" style="grid-auto-rows: {height * (width < 650 ? .5 : .45)}px;">
                     {#if Object.keys(locations).includes(slide.images)}
                         {#each locations[slide.images] as gridSlide, i}
                             {@const length = locations[slide.images].length}
@@ -163,7 +163,7 @@
                         {/each}
                     {/if}
                 </div>
-                <a class="view-map-link" href="https://www.alltext.nyc/map?q={slide.images}"><button class="view-map">View the Map of &ldquo;{slide.title}&rdquo; <span><ExternalLink color="white" /></span></button></a>
+                <a class="view-map-link" target="_blank" href="https://www.alltext.nyc/map?q={slide.images}"><button class="view-map">View the Map of &ldquo;{slide.title}&rdquo; <span><ExternalLink color="white" /></span></button></a>
             </Scrolly>
         </div>
     </div>
