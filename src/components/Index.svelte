@@ -154,9 +154,9 @@
 								{/if}
 								{#if slide.img !== "broadway-zoom.jpg"}
 									{#if slide.title !== "???"}
-										<a target="_blank" href="https://www.alltext.nyc/search?q={slide.title}">View Images of &ldquo;{slide.title}&rdquo; <span><ExternalLink color="white" /></span></a>
+										<a target="_blank" href="https://alltext.nyc/search?q={slide.title}">View Images of &ldquo;{slide.title}&rdquo; <span><ExternalLink color="white" /></span></a>
 									{:else if unlockedTitles[key] && slide.title == "???"}
-										<a target="_blank" href="https://www.alltext.nyc/search?q=unisex">View Images of &ldquo;Unisex&rdquo; <span><ExternalLink color="white" /></span></a>
+										<a target="_blank" href="https://alltext.nyc/search?q=unisex">View Images of &ldquo;Unisex&rdquo; <span><ExternalLink color="white" /></span></a>
 									{/if}
 								{/if}
 							</p>	
@@ -180,7 +180,7 @@
 						<img alt="Map of NYC showing the location of text that appears in Google Street View matching the phrase &ldquo;{props.replace('.jpg', '')}&rdquo;" src='assets/images/{props}' style="margin-bottom:{className === "pizza" ? '10px' : '50px'};">
 						{#if className === "pizza"}
 							<p class="map-slide-text">
-								<a target="_blank" href="https://www.alltext.nyc/search?q=pizza">View Images of &ldquo;Pizza&rdquo; <span><ExternalLink color="white" /></span></a>
+								<a target="_blank" href="https://alltext.nyc/search?q=pizza">View Images of &ldquo;Pizza&rdquo; <span><ExternalLink color="white" /></span></a>
 							</p>
 						{/if}
 					{/if}

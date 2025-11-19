@@ -163,7 +163,7 @@
                         {/each}
                     {/if}
                 </div>
-                <a class="view-map-link" target="_blank" href="https://www.alltext.nyc/map?q={slide.images}"><button class="view-map">View the Map of &ldquo;{slide.title}&rdquo; <span><ExternalLink color="white" /></span></button></a>
+                <a class="view-map-link" target="_blank" href="https://alltext.nyc/map?q={slide.images}"><button class="view-map">View the Map of &ldquo;{slide.title}&rdquo; <span><ExternalLink color="white" /></span></button></a>
             </Scrolly>
         </div>
     </div>
